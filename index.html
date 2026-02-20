@@ -88,7 +88,7 @@
     out.innerHTML = "<strong>Ergebnis:</strong><div class='hint'>Generiere echte KI-Hooks…</div>";
 
     try{
-      const res = await fetch("http://localhost:3000/api/hooks", {
+      const res = await fetch("https://crazytool.onrender.com/api/hooks"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic })
