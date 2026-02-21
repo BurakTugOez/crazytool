@@ -583,11 +583,33 @@
       60%  { transform: scale(1.0); opacity: 1; }
       100% { transform: scale(0.98); opacity: 0; }
     }
+	.cornerLogo{
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 260px;
+  height: 260px;
+  pointer-events: none;
+  opacity: 0.22;
+  filter: blur(0.2px) drop-shadow(0 18px 40px rgba(109,94,247,0.18));
+  z-index: 0;
+}
+
+@media (max-width: 900px){
+  .cornerLogo{ width: 180px; height: 180px; opacity: 0.18; }
+}
   </style>
 </head>
 
 <body>
   <!-- Background decor -->
+  <div class="cornerLogo" aria-hidden="true">
+  <svg width="220" height="220" viewBox="0 0 24 24" fill="none">
+    <path d="M12 2.5c2.7 2 4.2 4.3 4.2 6.8 0 3.8-3.2 6.8-4.2 7.9-1-1.1-4.2-4.1-4.2-7.9 0-2.5 1.5-4.8 4.2-6.8Z" fill="rgba(255,255,255,0.55)"/>
+    <path d="M5.2 13.2c2 .95 4.5 1.45 6.8 1.45 2.35 0 4.9-.5 6.8-1.45-.65 4.75-3.55 8.3-6.8 8.3-3.25 0-6.15-3.55-6.8-8.3Z" fill="rgba(109,94,247,0.25)"/>
+    <path d="M12 8.1c.9 0 1.7.72 1.7 1.6S12.9 11.3 12 11.3s-1.7-.72-1.7-1.6.8-1.6 1.7-1.6Z" fill="rgba(56,189,248,0.35)"/>
+  </svg>
+</div>
   <div class="bgDecor">
     <div class="shape s1"></div>
     <div class="shape s2"></div>
@@ -857,6 +879,29 @@
     let lastHooks = [];
     let lastScript = "";
     let tab = "hooks";
+	
+	function sanitizeOneHook(s){
+  return String(s || "")
+    .replace(/^```json\s*/i, "")
+    .replace(/^```/i, "")
+    .replace(/```$/i, "")
+    .replace(/^\s*\[\s*$/, "")
+    .replace(/^\s*\]\s*$/, "")
+    .replace(/^\s*,\s*$/, "")
+    .replace(/^\s*"+|"+\s*$/g, "")     // quotes weg
+    .replace(/^\s*[-*•]\s*/g, "")      // bullets weg
+    .replace(/^\s*,\s*/g, "")
+    .replace(/\s*,\s*$/g, "")
+    .trim();
+}
+
+function sanitizeHooks(arr){
+  const cleaned = (Array.isArray(arr) ? arr : [])
+    .map(sanitizeOneHook)
+    .filter(h => h && h.length > 2)
+    .filter(h => !/^json$/i.test(h));
+  return cleaned;
+}
 
     function toast(msg="Kopiert ✅"){
       const t = document.getElementById("toast");
@@ -1118,8 +1163,9 @@
         const data = await res.json();
         if(!res.ok) throw new Error(data?.error || "Fehler");
 
-        const hooks = Array.isArray(data.hooks) ? data.hooks : [];
-        lastHooks = hooks;
+        const rawHooks = Array.isArray(data.hooks) ? data.hooks : [];
+const hooks = sanitizeHooks(rawHooks);
+lastHooks = hooks;
 
         setLimitUI(data.remaining, data.limit);
         addHistory({ topic, style, platform, count });
