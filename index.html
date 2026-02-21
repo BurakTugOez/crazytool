@@ -3,19 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CrazyTool – Hook Generator</title>
+  <title>CrazyTool – Hooks & Scripts</title>
   <style>
     :root{
-      --bg1:#0b1224;
-      --bg2:#0f1b35;
+      --bg1:#0b1224; --bg2:#0f1b35;
       --card: rgba(255,255,255,0.06);
       --stroke: rgba(255,255,255,0.14);
-      --text:#e6eefc;
-      --muted:#9fb0cc;
-      --green:#22c55e;
-      --green2:#16a34a;
-      --red:#ef4444;
+      --text:#e6eefc; --muted:#9fb0cc;
+      --green:#22c55e; --green2:#16a34a;
       --shadow: 0 18px 60px rgba(0,0,0,0.45);
+      --danger:#ef4444;
     }
     *{ box-sizing:border-box; }
     body{
@@ -31,14 +28,12 @@
       justify-content:center;
       padding:56px 16px;
     }
-    .wrap{ width:min(980px, 100%); }
+    .wrap{ width:min(1020px, 100%); }
     .top{
       display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
       margin-bottom:18px;
     }
-    .brand{
-      display:flex; gap:12px; align-items:center;
-    }
+    .brand{ display:flex; gap:12px; align-items:center; }
     .logo{
       width:44px; height:44px; border-radius:14px;
       background: linear-gradient(135deg, rgba(34,197,94,0.9), rgba(56,189,248,0.7));
@@ -46,27 +41,26 @@
     }
     h1{ margin:0; font-size:28px; letter-spacing:0.2px;}
     .sub{ margin:2px 0 0; color:var(--muted); font-size:14px; }
+
     .badge{
       border:1px solid var(--stroke);
       background: rgba(255,255,255,0.05);
-      padding:10px 12px;
+      padding:12px;
       border-radius:14px;
       color: var(--muted);
       font-size:13px;
       line-height:1.3;
-      max-width:360px;
+      max-width:420px;
     }
-
     .grid{
       display:grid;
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: 1.35fr 0.65fr;
       gap:16px;
     }
-    @media (max-width: 860px){
+    @media (max-width: 920px){
       .grid{ grid-template-columns: 1fr; }
       .badge{ max-width:none; }
     }
-
     .card{
       background: var(--card);
       border: 1px solid var(--stroke);
@@ -75,18 +69,11 @@
       overflow:hidden;
       backdrop-filter: blur(10px);
     }
-    .card .head{
-      padding:18px 18px 0;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .card .body{ padding:18px; }
-
+    .head{ padding:16px 16px 0; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .body{ padding:16px; }
     .label{ color:var(--muted); font-size:12px; margin:0 0 8px; }
     .row{ display:flex; gap:10px; }
-    input, select{
+    input, select, textarea{
       width:100%;
       padding:12px 12px;
       border-radius:14px;
@@ -96,13 +83,14 @@
       outline:none;
       font-size:15px;
     }
+    textarea{ min-height:120px; resize:vertical; }
     input::placeholder{ color: rgba(159,176,204,0.7); }
 
     .btn{
       border:none;
       background: linear-gradient(180deg, var(--green), var(--green2));
       color:#052e16;
-      font-weight:800;
+      font-weight:900;
       padding:12px 14px;
       border-radius:14px;
       cursor:pointer;
@@ -115,11 +103,23 @@
       border:1px solid var(--stroke);
       background: rgba(255,255,255,0.06);
       color: var(--text);
-      font-weight:700;
+      font-weight:800;
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .tabs{ display:flex; gap:8px; }
+    .tab{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-weight:800;
       padding:10px 12px;
       border-radius:14px;
       cursor:pointer;
     }
+    .tab.active{ outline: 2px solid rgba(34,197,94,0.35); }
 
     .meta{
       display:grid;
@@ -139,17 +139,13 @@
       background: rgba(0,0,0,0.22);
       border: 1px solid rgba(255,255,255,0.12);
     }
-    .outTop{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
+    .outTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
     .hint{ color:var(--muted); font-size:13px; margin-top:8px; }
     .err{ color:#fecaca; font-size:13px; margin-top:8px; }
-
+    .danger{ color:#fecaca; font-size:13px; margin-top:8px; }
     ul{ margin:12px 0 0; padding-left:18px; }
     li{ margin:10px 0; line-height:1.35; }
-    .hookRow{
-      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
-    }
+    .hookRow{ display:flex; gap:10px; align-items:flex-start; justify-content:space-between; }
     .copy{
       white-space:nowrap;
       font-size:12px;
@@ -159,7 +155,21 @@
       background: rgba(255,255,255,0.06);
       color: var(--text);
       cursor:pointer;
+      font-weight:800;
     }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color: var(--muted);
+      font-weight:800;
+    }
+
     .toast{
       position: fixed;
       left: 50%;
@@ -176,6 +186,21 @@
       transition: opacity .2s ease;
     }
     .toast.show{ opacity:1; }
+
+    .history{
+      display:flex; flex-direction:column; gap:8px;
+      margin-top:10px;
+    }
+    .histItem{
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+      padding:10px 10px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      border-radius:14px;
+      cursor:pointer;
+    }
+    .histItem b{ font-size:13px; }
+    .histItem span{ color:var(--muted); font-size:12px; }
   </style>
 </head>
 <body>
@@ -185,24 +210,41 @@
         <div class="logo"></div>
         <div>
           <h1>CrazyTool</h1>
-          <div class="sub">Virale Hooks in Sekunden – für TikTok, Reels & Shorts.</div>
+          <div class="sub">Hooks + Scripts in Sekunden – mit History, Share-Link & Daily Free-Limit.</div>
         </div>
       </div>
+
       <div class="badge">
-        <b>Tipp:</b> Gib ein Thema ein + wähle Stil. Klick auf <b>Generieren</b> und kopier die Hooks direkt.
+        <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+          <span class="pill">Free today: <span id="remaining">–</span>/<span id="limit">–</span></span>
+          <button class="btn2" onclick="openLogin()">Login</button>
+        </div>
+        <div class="hint" style="margin:10px 0 0">
+          Login ist „light“ (nur local). Für echtes SaaS später: echte Auth (z.B. Clerk/Auth0).
+        </div>
       </div>
     </div>
 
     <div class="grid">
       <div class="card">
         <div class="head">
-          <div>
+          <div class="tabs">
+            <button class="tab active" id="tabHooks" onclick="setTab('hooks')">Hooks</button>
+            <button class="tab" id="tabScript" onclick="setTab('script')">Hook → Script</button>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn2" onclick="shareLink()">Share</button>
+            <button class="btn2" onclick="fillExample()">Beispiel</button>
+          </div>
+        </div>
+
+        <div class="body">
+          <!-- Hooks panel -->
+          <div id="panelHooks">
             <div class="label">Thema</div>
             <div class="row">
               <input id="userInput" type="text" placeholder="z.B. Beziehung, Geld, Fitness, KI Videos..." />
-              <button class="btn" id="genBtn" onclick="generate()">
-                <span>Generieren</span> <span>⚡</span>
-              </button>
+              <button class="btn" id="genBtn" onclick="generateHooks()"><span>Generieren</span> <span>⚡</span></button>
             </div>
 
             <div class="meta">
@@ -232,38 +274,79 @@
                 </select>
               </div>
             </div>
-          </div>
-          <button class="btn2" onclick="fillExample()">Beispiel</button>
-        </div>
 
-        <div class="body">
-          <div class="out" id="output">
-            <div class="outTop">
-              <strong>Ergebnis</strong>
-              <div style="display:flex; gap:8px;">
-                <button class="copy" onclick="copyAll()">Alles kopieren</button>
-                <button class="copy" onclick="clearOut()">Leeren</button>
+            <div class="out" id="outputHooks">
+              <div class="outTop">
+                <strong>Ergebnis</strong>
+                <div style="display:flex; gap:8px;">
+                  <button class="copy" onclick="copyAll()">Alles kopieren</button>
+                  <button class="copy" onclick="clearHooks()">Leeren</button>
+                </div>
+              </div>
+              <div class="hint">Noch leer…</div>
+            </div>
+          </div>
+
+          <!-- Script panel -->
+          <div id="panelScript" style="display:none;">
+            <div class="label">Hook (oder lass leer und nutz Thema)</div>
+            <textarea id="hookInput" placeholder="Füge hier einen Hook ein…"></textarea>
+
+            <div class="meta" style="margin-top:10px;">
+              <div>
+                <div class="label">Plattform</div>
+                <select id="platform2">
+                  <option value="tiktok" selected>TikTok</option>
+                  <option value="reels">Reels</option>
+                  <option value="youtube">YouTube</option>
+                </select>
+              </div>
+              <div>
+                <div class="label">Ton</div>
+                <select id="tone">
+                  <option value="direkt" selected>Direkt</option>
+                  <option value="freundlich">Freundlich</option>
+                  <option value="hart">Hart</option>
+                  <option value="story">Story-Style</option>
+                </select>
+              </div>
+              <div>
+                <div class="label">Aktion</div>
+                <button class="btn" id="scriptBtn" onclick="generateScript()"><span>Script bauen</span> <span>📝</span></button>
               </div>
             </div>
-            <div class="hint">Noch leer…</div>
+
+            <div class="out" id="outputScript">
+              <div class="outTop">
+                <strong>Script</strong>
+                <div style="display:flex; gap:8px;">
+                  <button class="copy" onclick="copyScript()">Copy</button>
+                  <button class="copy" onclick="clearScript()">Leeren</button>
+                </div>
+              </div>
+              <div class="hint">Noch leer…</div>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Right column -->
       <div class="card">
-        <div class="head">
-          <strong>So nutzt du’s</strong>
-        </div>
+        <div class="head"><strong>History</strong></div>
         <div class="body">
           <div class="hint" style="margin-top:0">
-            1) Thema eingeben<br/>
-            2) Stil wählen<br/>
-            3) Hooks kopieren<br/><br/>
-            <b>Pro Move:</b> Nimm Hook #1 als Video-Start und erklär’s in 30–45 Sekunden.
+            Klick auf einen Eintrag → füllt Thema + Einstellungen und generiert auf Wunsch neu.
+          </div>
+
+          <div class="history" id="history"></div>
+
+          <div style="margin-top:14px; display:flex; gap:8px;">
+            <button class="btn2" onclick="clearHistory()">History löschen</button>
+            <button class="btn2" onclick="setAutoRun()">Auto-Run: <span id="autoRunTxt">Aus</span></button>
           </div>
 
           <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.12); padding-top:14px;">
-            <div class="label">Ideen zum Testen</div>
+            <div class="label">Schnelltests</div>
             <div style="display:flex; flex-wrap:wrap; gap:8px;">
               <button class="copy" onclick="setTopic('Beziehung')">Beziehung</button>
               <button class="copy" onclick="setTopic('Geld sparen')">Geld sparen</button>
@@ -280,9 +363,37 @@
   </div>
 
   <script>
-    const API_URL = "https://crazytool.onrender.com/api/hooks";
-    let lastHooks = [];
+    const API_BASE = "https://crazytool.onrender.com";
+    const API_HOOKS = API_BASE + "/api/hooks";
+    const API_SCRIPT = API_BASE + "/api/script";
 
+    let lastHooks = [];
+    let lastScript = "";
+    let currentTab = "hooks";
+
+    // ---------- Local "login" ----------
+    function getUser(){
+      return JSON.parse(localStorage.getItem("ct_user") || "null");
+    }
+    function setUser(u){
+      localStorage.setItem("ct_user", JSON.stringify(u));
+      toast("Login gespeichert");
+      refreshLimitUI();
+    }
+    function getUserId(){
+      const u = getUser();
+      return u?.id || "";
+    }
+    function openLogin(){
+      const u = getUser();
+      const name = prompt("Name (optional):", u?.name || "") ?? "";
+      const email = prompt("E-Mail (für Free-Limit, local):", u?.email || "") ?? "";
+      // simple id: email lowercased
+      const id = (email || "").trim().toLowerCase();
+      setUser({ name: name.trim(), email: email.trim(), id });
+    }
+
+    // ---------- Toast ----------
     function toast(msg="Kopiert ✅"){
       const t = document.getElementById("toast");
       t.textContent = msg;
@@ -290,27 +401,170 @@
       setTimeout(()=>t.classList.remove("show"), 900);
     }
 
+    // ---------- Tabs ----------
+    function setTab(tab){
+      currentTab = tab;
+      document.getElementById("tabHooks").classList.toggle("active", tab==="hooks");
+      document.getElementById("tabScript").classList.toggle("active", tab==="script");
+      document.getElementById("panelHooks").style.display = tab==="hooks" ? "block" : "none";
+      document.getElementById("panelScript").style.display = tab==="script" ? "block" : "none";
+    }
+
+    // ---------- History ----------
+    const HISTORY_KEY = "ct_history";
+    const AUTORUN_KEY = "ct_autorun";
+
+    function loadHistory(){
+      return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    }
+    function saveHistory(items){
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, 10)));
+      renderHistory();
+    }
+    function addHistory(item){
+      const items = loadHistory();
+      const filtered = items.filter(x => !(x.topic===item.topic && x.style===item.style && x.platform===item.platform && x.count===item.count));
+      filtered.unshift({ ...item, ts: Date.now() });
+      saveHistory(filtered);
+    }
+    function clearHistory(){
+      localStorage.removeItem(HISTORY_KEY);
+      renderHistory();
+      toast("History gelöscht");
+    }
+    function getAutoRun(){
+      return localStorage.getItem(AUTORUN_KEY) === "1";
+    }
+    function setAutoRun(){
+      const v = getAutoRun() ? "0" : "1";
+      localStorage.setItem(AUTORUN_KEY, v);
+      document.getElementById("autoRunTxt").textContent = getAutoRun() ? "An" : "Aus";
+      toast("Auto-Run geändert");
+    }
+
+    function renderHistory(){
+      const el = document.getElementById("history");
+      const items = loadHistory();
+      if(!items.length){
+        el.innerHTML = `<div class="hint">Noch keine Einträge…</div>`;
+        return;
+      }
+      el.innerHTML = items.map(i => `
+        <div class="histItem" onclick='applyHistory(${JSON.stringify(i).replace(/'/g,"&#39;")})'>
+          <div>
+            <b>${escapeHtml(i.topic)}</b><br/>
+            <span>${escapeHtml(i.style)} · ${escapeHtml(i.platform)} · ${i.count}</span>
+          </div>
+          <button class="copy" onclick="event.stopPropagation(); shareLinkFrom(${JSON.stringify(i).replace(/'/g,"&#39;")})">Share</button>
+        </div>
+      `).join("");
+    }
+
+    function applyHistory(i){
+      document.getElementById("userInput").value = i.topic;
+      document.getElementById("style").value = i.style;
+      document.getElementById("platform").value = i.platform;
+      document.getElementById("count").value = String(i.count);
+      setTab("hooks");
+      if(getAutoRun()) generateHooks();
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+    }
+
+    // ---------- Share link ----------
+    function buildShareParams(obj){
+      const p = new URLSearchParams();
+      p.set("topic", obj.topic);
+      p.set("style", obj.style);
+      p.set("platform", obj.platform);
+      p.set("count", String(obj.count));
+      p.set("tab", obj.tab || "hooks");
+      return p.toString();
+    }
+
+    async function shareLink(){
+      const obj = {
+        topic: document.getElementById("userInput").value.trim(),
+        style: document.getElementById("style").value,
+        platform: document.getElementById("platform").value,
+        count: parseInt(document.getElementById("count").value, 10),
+        tab: currentTab
+      };
+      if(!obj.topic){ toast("Erst Thema eingeben"); return; }
+      const url = location.origin + location.pathname + "?" + buildShareParams(obj);
+      await navigator.clipboard.writeText(url);
+      toast("Share-Link kopiert ✅");
+    }
+
+    async function shareLinkFrom(i){
+      const url = location.origin + location.pathname + "?" + buildShareParams({ ...i, tab:"hooks" });
+      await navigator.clipboard.writeText(url);
+      toast("Share-Link kopiert ✅");
+    }
+
+    function applyFromURL(){
+      const q = new URLSearchParams(location.search);
+      const topic = q.get("topic");
+      const style = q.get("style");
+      const platform = q.get("platform");
+      const count = q.get("count");
+      const tab = q.get("tab");
+      if(tab) setTab(tab);
+
+      if(topic) document.getElementById("userInput").value = topic;
+      if(style) document.getElementById("style").value = style;
+      if(platform) document.getElementById("platform").value = platform;
+      if(count) document.getElementById("count").value = count;
+
+      // optional autorun via local setting only
+      if(topic && getAutoRun()) generateHooks();
+    }
+
+    // ---------- Limit UI ----------
+    function setLimitUI(remaining, limit){
+      document.getElementById("remaining").textContent = (remaining ?? "–");
+      document.getElementById("limit").textContent = (limit ?? "–");
+    }
+
+    async function refreshLimitUI(){
+      // We only know remaining after a call; keep it simple.
+      // If you want, we can add a /api/usage endpoint later.
+      const r = localStorage.getItem("ct_remaining");
+      const l = localStorage.getItem("ct_limit");
+      if(r && l) setLimitUI(r, l);
+    }
+
+    function saveLimitUI(remaining, limit){
+      if(typeof remaining === "number") localStorage.setItem("ct_remaining", String(remaining));
+      if(typeof limit === "number") localStorage.setItem("ct_limit", String(limit));
+      setLimitUI(remaining, limit);
+    }
+
+    // ---------- Hooks ----------
     function setTopic(v){
       document.getElementById("userInput").value = v;
       document.getElementById("userInput").focus();
     }
 
     function fillExample(){
-      setTopic("Beziehung");
-      document.getElementById("style").value = "neugierig";
+      setTopic("KI Videos");
+      document.getElementById("style").value = "provokant";
       document.getElementById("platform").value = "tiktok";
-      document.getElementById("count").value = "5";
+      document.getElementById("count").value = "10";
+      toast("Beispiel gesetzt");
     }
 
-    function clearOut(){
+    function clearHooks(){
       lastHooks = [];
-      const out = document.getElementById("output");
+      const out = document.getElementById("outputHooks");
       out.innerHTML = `
         <div class="outTop">
           <strong>Ergebnis</strong>
           <div style="display:flex; gap:8px;">
             <button class="copy" onclick="copyAll()">Alles kopieren</button>
-            <button class="copy" onclick="clearOut()">Leeren</button>
+            <button class="copy" onclick="clearHooks()">Leeren</button>
           </div>
         </div>
         <div class="hint">Noch leer…</div>
@@ -325,50 +579,39 @@
 
     async function copyOne(text){
       await navigator.clipboard.writeText(text);
-      toast();
+      toast("Kopiert ✅");
     }
 
-    window.generate = async function generate(){
+    async function makeScriptFromHook(h){
+      setTab("script");
+      document.getElementById("hookInput").value = h;
+      document.getElementById("platform2").value = document.getElementById("platform").value;
+      await generateScript();
+    }
+
+    async function generateHooks(){
       const topic = document.getElementById("userInput").value.trim();
       const style = document.getElementById("style").value;
       const platform = document.getElementById("platform").value;
       const count = parseInt(document.getElementById("count").value, 10);
 
-      const out = document.getElementById("output");
+      const out = document.getElementById("outputHooks");
       const btn = document.getElementById("genBtn");
 
       if(!topic){
-        out.innerHTML = `
-          <div class="outTop">
-            <strong>Ergebnis</strong>
-            <div style="display:flex; gap:8px;">
-              <button class="copy" onclick="copyAll()">Alles kopieren</button>
-              <button class="copy" onclick="clearOut()">Leeren</button>
-            </div>
-          </div>
-          <div class="hint">Bitte erst ein Thema eingeben 🙂</div>
-        `;
+        out.innerHTML = `<div class="hint">Bitte erst ein Thema eingeben 🙂</div>`;
         return;
       }
 
       btn.disabled = true;
       btn.innerHTML = `<span>Generiere…</span> <span>⏳</span>`;
-      out.innerHTML = `
-        <div class="outTop">
-          <strong>Ergebnis</strong>
-          <div style="display:flex; gap:8px;">
-            <button class="copy" onclick="copyAll()">Alles kopieren</button>
-            <button class="copy" onclick="clearOut()">Leeren</button>
-          </div>
-        </div>
-        <div class="hint">KI arbeitet… (bei Render Free kann’s beim ersten Mal ~20–50s dauern)</div>
-      `;
+      out.innerHTML = `<div class="hint">KI arbeitet… (Render Free kann beim ersten Mal ~20–50s dauern)</div>`;
 
       try{
-        const res = await fetch(API_URL, {
+        const res = await fetch(API_HOOKS, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic, style, platform, count })
+          body: JSON.stringify({ topic, style, platform, count, userId: getUserId() })
         });
 
         const data = await res.json();
@@ -377,47 +620,114 @@
         const hooks = Array.isArray(data.hooks) ? data.hooks : [];
         lastHooks = hooks;
 
+        saveLimitUI(data.remaining, data.limit);
+
+        addHistory({ topic, style, platform, count });
+
         out.innerHTML = `
           <div class="outTop">
             <strong>Ergebnis</strong>
             <div style="display:flex; gap:8px;">
               <button class="copy" onclick="copyAll()">Alles kopieren</button>
-              <button class="copy" onclick="clearOut()">Leeren</button>
+              <button class="copy" onclick="clearHooks()">Leeren</button>
             </div>
           </div>
           <ul>
             ${hooks.map(h => `
               <li>
                 <div class="hookRow">
-                  <div>${h}</div>
-                  <button class="copy" onclick="copyOne(${JSON.stringify(h)})">Copy</button>
+                  <div>${escapeHtml(h)}</div>
+                  <div style="display:flex; gap:8px;">
+                    <button class="copy" onclick="copyOne(${JSON.stringify(h)})">Copy</button>
+                    <button class="copy" onclick="makeScriptFromHook(${JSON.stringify(h)})">Script</button>
+                  </div>
                 </div>
               </li>
             `).join("")}
           </ul>
-          <div class="hint">Tipp: Teste „Provokant“ + 10 Hooks für richtig starke Variationen.</div>
+          <div class="hint">Pro-Move: Nimm Hook #1, bau daraus ein Script → dann sofort posten.</div>
         `;
       } catch(err){
         out.innerHTML = `
-          <div class="outTop">
-            <strong>Ergebnis</strong>
-            <div style="display:flex; gap:8px;">
-              <button class="copy" onclick="copyAll()">Alles kopieren</button>
-              <button class="copy" onclick="clearOut()">Leeren</button>
-            </div>
-          </div>
-          <div class="err">Fehler: ${err.message}</div>
+          <div class="danger">Fehler: ${escapeHtml(err.message)}</div>
           <div class="hint">Wenn es beim ersten Klick hängt: Render Free „wacht“ manchmal erst auf.</div>
         `;
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<span>Generieren</span> <span>⚡</span>`;
       }
-    };
+    }
 
+    // ---------- Script ----------
+    function clearScript(){
+      lastScript = "";
+      const out = document.getElementById("outputScript");
+      out.innerHTML = `<div class="hint">Noch leer…</div>`;
+    }
+
+    async function copyScript(){
+      if(!lastScript){ toast("Nichts zum Kopieren"); return; }
+      await navigator.clipboard.writeText(lastScript);
+      toast("Script kopiert ✅");
+    }
+
+    async function generateScript(){
+      const hook = document.getElementById("hookInput").value.trim();
+      const topic = document.getElementById("userInput").value.trim();
+      const platform = document.getElementById("platform2").value;
+      const tone = document.getElementById("tone").value;
+
+      const btn = document.getElementById("scriptBtn");
+      const out = document.getElementById("outputScript");
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>Baue…</span> <span>⏳</span>`;
+      out.innerHTML = `<div class="hint">Script wird erstellt…</div>`;
+
+      try{
+        const res = await fetch(API_SCRIPT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ hook, topic, platform, tone, userId: getUserId() })
+        });
+
+        const data = await res.json();
+        if(!res.ok) throw new Error(data?.error || "Fehler");
+
+        lastScript = data.script || "";
+        saveLimitUI(data.remaining, data.limit);
+
+        out.innerHTML = `
+          <div class="outTop">
+            <strong>Script</strong>
+            <div style="display:flex; gap:8px;">
+              <button class="copy" onclick="copyScript()">Copy</button>
+              <button class="copy" onclick="clearScript()">Leeren</button>
+            </div>
+          </div>
+          <pre style="white-space:pre-wrap; margin:12px 0 0; color:var(--text); font-family:inherit;">${escapeHtml(lastScript)}</pre>
+          <div class="hint">Wenn du willst, bauen wir als nächstes: Caption + Hashtags + CTA-Varianten.</div>
+        `;
+      } catch(err){
+        out.innerHTML = `
+          <div class="danger">Fehler: ${escapeHtml(err.message)}</div>
+        `;
+      } finally{
+        btn.disabled = false;
+        btn.innerHTML = `<span>Script bauen</span> <span>📝</span>`;
+      }
+    }
+
+    // ---------- Keyboard ----------
     document.getElementById("userInput").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") window.generate();
+      if (e.key === "Enter" && currentTab === "hooks") generateHooks();
     });
+
+    // ---------- Init ----------
+    document.getElementById("autoRunTxt").textContent = getAutoRun() ? "An" : "Aus";
+    renderHistory();
+    refreshLimitUI();
+    applyFromURL();
   </script>
 </body>
 </html>
