@@ -7,27 +7,29 @@
 
   <style>
     :root{
-      /* Professional SaaS palette */
-      --bg0:#070A12;
-      --bg1:#0B1020;
-      --bg2:#0E1630;
+      /* brighter + more variation (still pro) */
+      --bg0:#070912;
+      --bg1:#0C1430;
+      --bg2:#0E1B3D;
 
-      --card: rgba(255,255,255,0.06);
-      --card2: rgba(255,255,255,0.04);
-      --stroke: rgba(255,255,255,0.12);
+      --card: rgba(255,255,255,0.08);
+      --card2: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.14);
 
-      --text:#EAF0FF;
-      --muted:#A7B2D6;
+      --text:#F2F6FF;
+      --muted:#B8C4E6;
 
-      --accent:#6D5EF7; /* purple */
-      --accent2:#22C55E; /* green */
-      --accent3:#38BDF8; /* blue */
+      --accent:#6D5EF7;   /* purple */
+      --accentB:#38BDF8;  /* blue */
+      --accentG:#22C55E;  /* green */
+      --accentP:#FB7185;  /* pink */
+      --accentY:#FBBF24;  /* amber */
 
-      --shadow: 0 18px 60px rgba(0,0,0,0.55);
-      --shadow2: 0 10px 30px rgba(0,0,0,0.35);
+      --shadow: 0 22px 70px rgba(0,0,0,0.55);
+      --shadow2: 0 12px 35px rgba(0,0,0,0.35);
 
-      --radius: 18px;
-      --radius2: 26px;
+      --r: 18px;
+      --r2: 26px;
     }
 
     *{ box-sizing:border-box; }
@@ -37,87 +39,167 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color: var(--text);
       background:
-        radial-gradient(900px 550px at 18% 14%, rgba(109,94,247,0.22), transparent 60%),
-        radial-gradient(900px 550px at 82% 16%, rgba(56,189,248,0.14), transparent 62%),
-        radial-gradient(1100px 650px at 50% 110%, rgba(34,197,94,0.14), transparent 62%),
+        radial-gradient(1200px 700px at 15% 12%, rgba(109,94,247,0.28), transparent 60%),
+        radial-gradient(1100px 680px at 85% 18%, rgba(56,189,248,0.22), transparent 62%),
+        radial-gradient(900px 560px at 55% 110%, rgba(34,197,94,0.18), transparent 60%),
         linear-gradient(180deg, var(--bg0), var(--bg1) 45%, var(--bg2));
-      display:flex;
-      justify-content:center;
-      padding: 28px 16px;
+      overflow-x:hidden;
     }
 
-    .app{
-      width:min(1120px, 100%);
+    /* Decorative background layer */
+    .bgDecor{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      z-index:0;
+      opacity: 0.9;
+    }
+    .grain{
+      position:absolute;
+      inset:-30%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      opacity: 0.28;
+      transform: rotate(3deg);
+    }
+    .shape{
+      position:absolute;
+      filter: blur(40px);
+      opacity:0.55;
+    }
+    .s1{ width:460px; height:460px; left:-120px; top:220px; background: rgba(251,113,133,0.22); border-radius: 60% 40% 55% 45%;}
+    .s2{ width:520px; height:520px; right:-140px; top:120px; background: rgba(109,94,247,0.22); border-radius: 50% 50% 45% 55%;}
+    .s3{ width:620px; height:620px; left:40%; bottom:-260px; background: rgba(56,189,248,0.18); border-radius: 55% 45% 50% 50%;}
+    .gridLines{
+      position:absolute;
+      inset:0;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(closest-side at 50% 10%, black, transparent 70%);
+      opacity: 0.16;
+    }
+
+    /* Layout */
+    .page{
+      position:relative;
+      z-index:1;
+      width:min(1220px, 100%);
+      margin: 0 auto;
+      padding: 28px 16px 44px;
+    }
+
+    /* Hero */
+    .hero{
       display:grid;
-      grid-template-columns: 320px 1fr;
-      gap:16px;
-      align-items:start;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 16px;
     }
-
     @media (max-width: 980px){
-      .app{ grid-template-columns: 1fr; }
+      .hero{ grid-template-columns: 1fr; }
     }
 
-    .panel{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius2);
+    .heroCard{
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--r2);
       box-shadow: var(--shadow);
       backdrop-filter: blur(12px);
       overflow:hidden;
+      position:relative;
+    }
+    .heroCard::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(700px 260px at 20% 10%, rgba(109,94,247,0.22), transparent 60%),
+                  radial-gradient(700px 260px at 70% 0%, rgba(56,189,248,0.18), transparent 60%);
+      pointer-events:none;
+      opacity: 0.8;
     }
 
-    .panelHeader{
-      padding: 18px 18px 12px;
+    .heroInner{
+      position:relative;
+      z-index:1;
+      padding: 18px 18px 16px;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .brandRow{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+      gap: 12px;
+      flex-wrap:wrap;
     }
 
-    .brand{
+    .brandLeft{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap: 14px;
     }
 
-    .logo{
-      width:44px; height:44px;
-      border-radius: 14px;
+    /* Big logo */
+    .logoBig{
+      width:64px; height:64px;
+      border-radius: 20px;
       display:grid;
       place-items:center;
-      background: radial-gradient(120% 120% at 20% 20%, rgba(109,94,247,0.9), rgba(56,189,248,0.65));
-      box-shadow: 0 14px 32px rgba(109,94,247,0.22);
-      border: 1px solid rgba(255,255,255,0.16);
+      background: radial-gradient(130% 130% at 20% 20%, rgba(109,94,247,1), rgba(56,189,248,0.8));
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 18px 40px rgba(109,94,247,0.22);
+      position:relative;
+      overflow:hidden;
     }
+    .logoBig::before{
+      content:"";
+      position:absolute;
+      width:160%;
+      height:160%;
+      left:-30%;
+      top:-30%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.40), transparent 45%);
+      opacity:0.6;
+    }
+    .logoBig svg{ position:relative; z-index:1; }
 
-    .brandTitle{
-      line-height:1.1;
-    }
-    .brandTitle h1{
+    .titleWrap h1{
       margin:0;
-      font-size: 18px;
+      font-size: 26px;
       letter-spacing:0.2px;
+      line-height:1.15;
     }
-    .brandTitle p{
-      margin:6px 0 0;
+    .titleWrap p{
+      margin: 6px 0 0;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 13px;
+      line-height:1.35;
+      max-width: 58ch;
     }
 
+    .chips{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
     .chip{
       display:inline-flex;
       align-items:center;
       gap:8px;
       padding: 8px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
       color: var(--muted);
       font-size: 12px;
-      font-weight:800;
+      font-weight:900;
       white-space:nowrap;
     }
 
@@ -129,7 +211,7 @@
       padding: 10px 12px;
       color: #0B1020;
       background: linear-gradient(180deg, rgba(109,94,247,1), rgba(109,94,247,0.86));
-      box-shadow: 0 16px 30px rgba(109,94,247,0.16);
+      box-shadow: 0 14px 30px rgba(109,94,247,0.20);
       transition: transform .08s ease, filter .08s ease;
       display:inline-flex;
       align-items:center;
@@ -137,19 +219,106 @@
       gap:8px;
       white-space:nowrap;
     }
-    .btn:hover{ filter: brightness(1.05); }
+    .btn:hover{ filter: brightness(1.06); }
     .btn:active{ transform: translateY(1px); }
     .btn:disabled{ opacity:.6; cursor:not-allowed; }
 
     .btnGhost{
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
       color: var(--text);
       box-shadow: var(--shadow2);
     }
 
-    .sidebarBody{
-      padding: 16px 16px 18px;
+    /* mini stats to fill space */
+    .statsRow{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 520px){
+      .statsRow{ grid-template-columns: 1fr; }
+    }
+
+    .stat{
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 12px 12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dot{
+      width:36px; height:36px;
+      border-radius: 14px;
+      display:grid; place-items:center;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.25);
+    }
+    .stat b{ display:block; font-size: 13px; margin-bottom:3px; }
+    .stat span{ color: var(--muted); font-size: 12px; }
+
+    /* right hero card */
+    .heroRight{
+      padding: 16px;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .heroRightTop{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .heroRightTop b{ font-size: 13px; }
+    .progress{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      overflow:hidden;
+    }
+    .bar{
+      height:100%;
+      width: 50%;
+      background: linear-gradient(90deg, rgba(34,197,94,0.95), rgba(56,189,248,0.95));
+      border-radius:999px;
+    }
+    .hint{
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.4;
+    }
+
+    /* Main App grid */
+    .app{
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .app{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow:hidden;
+    }
+
+    .panelHeader{
+      padding: 16px 16px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent);
     }
 
     .sectionTitle{
@@ -157,8 +326,12 @@
       color: var(--muted);
       font-weight:900;
       letter-spacing:0.18px;
-      margin: 0 0 10px;
       text-transform: uppercase;
+      margin: 0 0 10px;
+    }
+
+    .sidebarBody{
+      padding: 14px 16px 16px;
     }
 
     .history{
@@ -166,7 +339,6 @@
       flex-direction:column;
       gap:10px;
     }
-
     .histItem{
       display:flex;
       align-items:center;
@@ -175,13 +347,13 @@
       padding: 12px 12px;
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
+      background: rgba(0,0,0,0.14);
       cursor:pointer;
       transition: transform .08s ease, border-color .12s ease;
     }
     .histItem:hover{
       transform: translateY(-1px);
-      border-color: rgba(109,94,247,0.35);
+      border-color: rgba(56,189,248,0.35);
     }
     .histItem b{
       display:block;
@@ -199,20 +371,36 @@
       gap:8px;
       margin-top:10px;
     }
-
     .pillBtn{
       cursor:pointer;
       border-radius: 999px;
       padding: 8px 10px;
       border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.08);
       color: var(--text);
       font-weight:900;
       font-size:12px;
+      transition: transform .08s ease;
     }
-    .pillBtn:hover{ border-color: rgba(56,189,248,0.35); }
+    .pillBtn:hover{ transform: translateY(-1px); border-color: rgba(109,94,247,0.35); }
 
-    /* Main panel */
+    /* Main */
+    .tabs{ display:flex; gap:8px; }
+    .tab{
+      cursor:pointer;
+      font-weight:900;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+    .tab.active{
+      border-color: rgba(109,94,247,0.55);
+      box-shadow: 0 0 0 3px rgba(109,94,247,0.16);
+    }
+
     .mainHeaderRight{
       display:flex;
       gap:8px;
@@ -221,32 +409,13 @@
       justify-content:flex-end;
     }
 
-    .tabs{
-      display:flex;
-      gap:8px;
-    }
-    .tab{
-      cursor:pointer;
-      font-weight:900;
-      font-size: 13px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-    }
-    .tab.active{
-      border-color: rgba(109,94,247,0.5);
-      box-shadow: 0 0 0 3px rgba(109,94,247,0.16);
-    }
-
     .mainBody{
       padding: 16px 16px 18px;
     }
 
     .grid2{
       display:grid;
-      grid-template-columns: 1fr 220px;
+      grid-template-columns: 1fr 240px;
       gap:12px;
       align-items:end;
     }
@@ -260,6 +429,7 @@
       font-size: 12px;
       font-weight:900;
       letter-spacing:0.18px;
+      text-transform: uppercase;
     }
 
     input, select, textarea{
@@ -267,7 +437,7 @@
       padding: 12px 12px;
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(0,0,0,0.22);
+      background: rgba(0,0,0,0.18);
       color: var(--text);
       outline:none;
       font-size: 14px;
@@ -288,9 +458,21 @@
       margin-top: 14px;
       border-radius: 20px;
       border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
+      background: rgba(0,0,0,0.14);
       padding: 14px;
+      position:relative;
+      overflow:hidden;
     }
+    .out::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(520px 180px at 18% 0%, rgba(251,191,36,0.10), transparent 60%),
+                  radial-gradient(520px 180px at 70% 0%, rgba(34,197,94,0.10), transparent 60%);
+      opacity: 0.75;
+      pointer-events:none;
+    }
+    .out > *{ position:relative; z-index:1; }
 
     .outTop{
       display:flex;
@@ -299,23 +481,7 @@
       gap:10px;
     }
 
-    .hint{
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--muted);
-      line-height:1.4;
-    }
-    .err{
-      margin-top: 8px;
-      font-size: 13px;
-      color: #fecaca;
-      line-height:1.4;
-    }
-
-    ul{
-      margin: 12px 0 0;
-      padding-left: 18px;
-    }
+    ul{ margin: 12px 0 0; padding-left: 18px; }
     li{ margin: 10px 0; line-height:1.35; }
 
     .hookRow{
@@ -332,16 +498,39 @@
       padding: 8px 10px;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.08);
       color: var(--text);
       white-space:nowrap;
     }
     .miniBtn:hover{ border-color: rgba(34,197,94,0.35); }
 
+    .err{
+      margin-top: 8px;
+      font-size: 13px;
+      color: #fecaca;
+      line-height:1.4;
+    }
+
     .mutedSmall{
       font-size:12px;
       color: var(--muted);
       font-weight:800;
+    }
+
+    /* Footer */
+    .footer{
+      margin-top: 14px;
+      display:flex;
+      gap:10px;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      color: rgba(255,255,255,0.60);
+      font-size: 12px;
+    }
+    .footer a{
+      color: rgba(255,255,255,0.72);
+      text-decoration:none;
+      border-bottom: 1px dashed rgba(255,255,255,0.24);
     }
 
     /* Toast */
@@ -352,8 +541,8 @@
       transform: translateX(-50%);
       padding: 10px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.20);
+      background: rgba(0,0,0,0.65);
       color: var(--text);
       font-size: 13px;
       opacity: 0;
@@ -398,171 +587,260 @@
 </head>
 
 <body>
-  <div class="app">
+  <!-- Background decor -->
+  <div class="bgDecor">
+    <div class="shape s1"></div>
+    <div class="shape s2"></div>
+    <div class="shape s3"></div>
+    <div class="gridLines"></div>
+    <div class="grain"></div>
+  </div>
 
-    <!-- Sidebar -->
-    <aside class="panel">
-      <div class="panelHeader">
-        <div class="brand">
-          <div class="logo" aria-label="Logo">
-            <!-- Invented logo (SVG) -->
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2.5c2.6 2 4 4.2 4 6.6 0 3.6-3 6.4-4 7.4-1-1-4-3.8-4-7.4 0-2.4 1.4-4.6 4-6.6Z" fill="rgba(255,255,255,0.92)"/>
-              <path d="M5 13.2c1.9 1 4.4 1.5 7 1.5s5.1-.5 7-1.5c-.6 4.7-3.6 8.3-7 8.3s-6.4-3.6-7-8.3Z" fill="rgba(0,0,0,0.28)"/>
-            </svg>
-          </div>
-          <div class="brandTitle">
-            <h1>Hook Generator</h1>
-            <p>Professionelle Hooks & Scripts – schnell.</p>
-          </div>
-        </div>
-        <span class="chip">✨ by Tugi</span>
-      </div>
+  <div class="page">
 
-      <div class="sidebarBody">
-        <div class="sectionTitle">Free Today</div>
-        <div style="display:flex; gap:10px; align-items:center; justify-content:space-between;">
-          <span class="chip"><span id="remaining">–</span>/<span id="limit">–</span> requests</span>
-          <button class="btn btnGhost" onclick="openLogin()">Login</button>
-        </div>
-        <div class="hint">Login ist lokal (MVP). Für echte Accounts später: richtige Auth.</div>
-
-        <div style="height:14px"></div>
-
-        <div class="sectionTitle">History</div>
-        <div class="history" id="history"></div>
-
-        <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-          <button class="btn btnGhost" onclick="clearHistory()">History löschen</button>
-          <button class="btn btnGhost" onclick="toggleAutoRun()">Auto-Run: <span id="autoRunTxt">Aus</span></button>
-        </div>
-
-        <div style="height:16px"></div>
-        <div class="sectionTitle">Schnelltests</div>
-        <div class="pillRow">
-          <button class="pillBtn" onclick="setTopic('Beziehung')">Beziehung</button>
-          <button class="pillBtn" onclick="setTopic('Geld sparen')">Geld sparen</button>
-          <button class="pillBtn" onclick="setTopic('Fitness')">Fitness</button>
-          <button class="pillBtn" onclick="setTopic('KI Videos')">KI Videos</button>
-          <button class="pillBtn" onclick="setTopic('Selbstbewusstsein')">Selbstbewusstsein</button>
-        </div>
-
-        <div style="height:12px"></div>
-        <div class="mutedSmall">Tipp: Provokant + 10 → beste Varianten.</div>
-      </div>
-    </aside>
-
-    <!-- Main -->
-    <main class="panel">
-      <div class="panelHeader">
-        <div class="tabs">
-          <button class="tab active" id="tabHooks" onclick="setTab('hooks')">Hooks</button>
-          <button class="tab" id="tabScript" onclick="setTab('script')">Hook → Script</button>
-        </div>
-
-        <div class="mainHeaderRight">
-          <button class="btn btnGhost" onclick="shareLink()">Share</button>
-          <button class="btn btnGhost" onclick="fillExample()">Beispiel</button>
-        </div>
-      </div>
-
-      <div class="mainBody">
-
-        <!-- Hooks Panel -->
-        <section id="panelHooks">
-          <div class="grid2">
-            <div>
-              <div class="label">Thema</div>
-              <input id="userInput" placeholder="z.B. Beziehung, Geld, Fitness, KI Videos..." />
-            </div>
-            <button class="btn" id="genBtn" onclick="generateHooks()">
-              Generieren <span style="opacity:.9;">⚡</span>
-            </button>
-          </div>
-
-          <div class="meta">
-            <div>
-              <div class="label">Stil</div>
-              <select id="style">
-                <option value="neugierig" selected>Neugierig</option>
-                <option value="provokant">Provokant</option>
-                <option value="story">Story</option>
-                <option value="fakten">Fakten</option>
-              </select>
-            </div>
-            <div>
-              <div class="label">Plattform</div>
-              <select id="platform">
-                <option value="tiktok" selected>TikTok</option>
-                <option value="reels">Reels</option>
-                <option value="youtube">YouTube</option>
-              </select>
-            </div>
-            <div>
-              <div class="label">Anzahl</div>
-              <select id="count">
-                <option value="3" selected>3</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="out" id="outputHooks">
-            <div class="outTop">
-              <strong>Ergebnis</strong>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="miniBtn" onclick="copyAll()">Alles kopieren</button>
-                <button class="miniBtn" onclick="clearHooks()">Leeren</button>
+    <!-- HERO (fills space + makes it feel "real product") -->
+    <section class="hero">
+      <div class="heroCard">
+        <div class="heroInner">
+          <div class="brandRow">
+            <div class="brandLeft">
+              <div class="logoBig" aria-label="Logo">
+                <!-- invented logo (bigger, nicer) -->
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2.5c2.7 2 4.2 4.3 4.2 6.8 0 3.8-3.2 6.8-4.2 7.9-1-1.1-4.2-4.1-4.2-7.9 0-2.5 1.5-4.8 4.2-6.8Z" fill="rgba(255,255,255,0.95)"/>
+                  <path d="M5.2 13.2c2 .95 4.5 1.45 6.8 1.45 2.35 0 4.9-.5 6.8-1.45-.65 4.75-3.55 8.3-6.8 8.3-3.25 0-6.15-3.55-6.8-8.3Z" fill="rgba(0,0,0,0.28)"/>
+                  <path d="M12 8.1c.9 0 1.7.72 1.7 1.6S12.9 11.3 12 11.3s-1.7-.72-1.7-1.6.8-1.6 1.7-1.6Z" fill="rgba(109,94,247,0.75)"/>
+                </svg>
+              </div>
+              <div class="titleWrap">
+                <h1>Hook Generator</h1>
+                <p>Erzeuge virale Hooks & verwandle sie in Scripts – schnell, sauber und professionell. Ideal für TikTok, Reels & YouTube Shorts.</p>
               </div>
             </div>
-            <div class="hint">Noch leer…</div>
-          </div>
-        </section>
 
-        <!-- Script Panel -->
-        <section id="panelScript" style="display:none;">
-          <div class="label">Hook (oder leer lassen und Thema nutzen)</div>
-          <textarea id="hookInput" placeholder="Füge hier einen Hook ein…"></textarea>
-
-          <div class="meta" style="margin-top:12px;">
-            <div>
-              <div class="label">Plattform</div>
-              <select id="platform2">
-                <option value="tiktok" selected>TikTok</option>
-                <option value="reels">Reels</option>
-                <option value="youtube">YouTube</option>
-              </select>
-            </div>
-            <div>
-              <div class="label">Ton</div>
-              <select id="tone">
-                <option value="direkt" selected>Direkt</option>
-                <option value="freundlich">Freundlich</option>
-                <option value="hart">Hart</option>
-                <option value="story">Story-Style</option>
-              </select>
-            </div>
-            <div style="display:flex; align-items:end;">
-              <button class="btn" id="scriptBtn" onclick="generateScript()">Script bauen 📝</button>
+            <div class="chips">
+              <span class="chip">✨ by Tugi</span>
+              <span class="chip">⚡ Instant Ideas</span>
+              <span class="chip">🧠 AI Powered</span>
             </div>
           </div>
 
-          <div class="out" id="outputScript">
-            <div class="outTop">
-              <strong>Script</strong>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="miniBtn" onclick="copyScript()">Copy</button>
-                <button class="miniBtn" onclick="clearScript()">Leeren</button>
+          <div class="statsRow">
+            <div class="stat">
+              <div class="dot">🎯</div>
+              <div>
+                <b>Hook-Varianten</b>
+                <span>3 / 5 / 10 pro Thema</span>
               </div>
             </div>
-            <div class="hint">Noch leer…</div>
+            <div class="stat">
+              <div class="dot">📝</div>
+              <div>
+                <b>Hook → Script</b>
+                <span>Content in 1 Klick</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="dot">📌</div>
+              <div>
+                <b>History + Share</b>
+                <span>Wiederverwenden & teilen</span>
+              </div>
+            </div>
           </div>
-        </section>
 
+          <div class="hint">
+            Pro-Tipp: Stil <b>Provokant</b> + Anzahl <b>10</b> → du pickst 1–2 Perlen und baust daraus ein Script.
+          </div>
+        </div>
       </div>
-    </main>
 
+      <div class="heroCard">
+        <div class="heroRight">
+          <div class="heroRightTop">
+            <b>Dein Free-Limit</b>
+            <button class="btn btnGhost" onclick="openLogin()">Login</button>
+          </div>
+
+          <div class="progress" aria-label="usage">
+            <div class="bar" id="usageBar"></div>
+          </div>
+
+          <div class="hint">
+            Heute: <b><span id="remaining">–</span></b> von <b><span id="limit">–</span></b> Requests frei. <br/>
+            Hinweis: Render Free kann beim ersten Call etwas “aufwachen”.
+          </div>
+
+          <div class="hint">
+            <b>Mini-Guide:</b> 1) Thema → Hooks. 2) Beste Hook → Script. 3) Posten. Repeat.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APP -->
+    <div class="app">
+      <!-- Sidebar -->
+      <aside class="panel">
+        <div class="panelHeader">
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <strong>Workspace</strong>
+            <span class="mutedSmall">Schnelltests + History</span>
+          </div>
+          <span class="chip">MVP</span>
+        </div>
+
+        <div class="sidebarBody">
+          <div class="sectionTitle">History</div>
+          <div class="history" id="history"></div>
+
+          <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+            <button class="btn btnGhost" onclick="clearHistory()">History löschen</button>
+            <button class="btn btnGhost" onclick="toggleAutoRun()">Auto-Run: <span id="autoRunTxt">Aus</span></button>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <div class="sectionTitle">Schnelltests</div>
+          <div class="pillRow">
+            <button class="pillBtn" onclick="setTopic('Beziehung')">Beziehung</button>
+            <button class="pillBtn" onclick="setTopic('Geld sparen')">Geld sparen</button>
+            <button class="pillBtn" onclick="setTopic('Fitness')">Fitness</button>
+            <button class="pillBtn" onclick="setTopic('KI Videos')">KI Videos</button>
+            <button class="pillBtn" onclick="setTopic('Selbstbewusstsein')">Selbstbewusstsein</button>
+          </div>
+
+          <div style="height:14px"></div>
+          <div class="sectionTitle">Ideen</div>
+          <div class="hint">
+            • “Warum macht das jeder falsch?”<br/>
+            • “3 Fehler, die dich sabotieren”<br/>
+            • “Das sagt dir niemand…”<br/>
+          </div>
+
+          <div style="height:10px"></div>
+          <div class="mutedSmall">Easter-Egg: oben links klicken 😄</div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="panel">
+        <div class="panelHeader">
+          <div class="tabs">
+            <button class="tab active" id="tabHooks" onclick="setTab('hooks')">Hooks</button>
+            <button class="tab" id="tabScript" onclick="setTab('script')">Hook → Script</button>
+          </div>
+
+          <div class="mainHeaderRight">
+            <button class="btn btnGhost" onclick="shareLink()">Share</button>
+            <button class="btn btnGhost" onclick="fillExample()">Beispiel</button>
+          </div>
+        </div>
+
+        <div class="mainBody">
+          <!-- Hooks -->
+          <section id="panelHooks">
+            <div class="grid2">
+              <div>
+                <div class="label">Thema</div>
+                <input id="userInput" placeholder="z.B. Beziehung, Geld, Fitness, KI Videos..." />
+              </div>
+              <button class="btn" id="genBtn" onclick="generateHooks()">
+                Generieren <span style="opacity:.9;">⚡</span>
+              </button>
+            </div>
+
+            <div class="meta">
+              <div>
+                <div class="label">Stil</div>
+                <select id="style">
+                  <option value="neugierig" selected>Neugierig</option>
+                  <option value="provokant">Provokant</option>
+                  <option value="story">Story</option>
+                  <option value="fakten">Fakten</option>
+                </select>
+              </div>
+              <div>
+                <div class="label">Plattform</div>
+                <select id="platform">
+                  <option value="tiktok" selected>TikTok</option>
+                  <option value="reels">Reels</option>
+                  <option value="youtube">YouTube</option>
+                </select>
+              </div>
+              <div>
+                <div class="label">Anzahl</div>
+                <select id="count">
+                  <option value="3" selected>3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="out" id="outputHooks">
+              <div class="outTop">
+                <strong>Ergebnis</strong>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="miniBtn" onclick="copyAll()">Alles kopieren</button>
+                  <button class="miniBtn" onclick="clearHooks()">Leeren</button>
+                </div>
+              </div>
+              <div class="hint">Noch leer…</div>
+            </div>
+          </section>
+
+          <!-- Script -->
+          <section id="panelScript" style="display:none;">
+            <div class="label">Hook (oder leer lassen und Thema nutzen)</div>
+            <textarea id="hookInput" placeholder="Füge hier einen Hook ein…"></textarea>
+
+            <div class="meta" style="margin-top:12px;">
+              <div>
+                <div class="label">Plattform</div>
+                <select id="platform2">
+                  <option value="tiktok" selected>TikTok</option>
+                  <option value="reels">Reels</option>
+                  <option value="youtube">YouTube</option>
+                </select>
+              </div>
+              <div>
+                <div class="label">Ton</div>
+                <select id="tone">
+                  <option value="direkt" selected>Direkt</option>
+                  <option value="freundlich">Freundlich</option>
+                  <option value="hart">Hart</option>
+                  <option value="story">Story-Style</option>
+                </select>
+              </div>
+              <div style="display:flex; align-items:end;">
+                <button class="btn" id="scriptBtn" onclick="generateScript()">Script bauen 📝</button>
+              </div>
+            </div>
+
+            <div class="out" id="outputScript">
+              <div class="outTop">
+                <strong>Script</strong>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="miniBtn" onclick="copyScript()">Copy</button>
+                  <button class="miniBtn" onclick="clearScript()">Leeren</button>
+                </div>
+              </div>
+              <div class="hint">Noch leer…</div>
+            </div>
+          </section>
+
+          <div class="footer">
+            <div>© <b>Hook Generator</b> · lokal MVP · bald: Accounts & Premium</div>
+            <div>
+              <a href="#" onclick="alert('Coming soon 🙂'); return false;">Roadmap</a> ·
+              <a href="#" onclick="alert('Coming soon 🙂'); return false;">Pricing</a>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
   </div>
 
   <div class="toast" id="toast">Kopiert ✅</div>
@@ -572,17 +850,14 @@
   <div id="loveOverlay">Seni seviyorum hayatim</div>
 
   <script>
-    // ---- API ----
     const API_BASE = "https://crazytool.onrender.com";
     const API_HOOKS = API_BASE + "/api/hooks";
     const API_SCRIPT = API_BASE + "/api/script";
 
-    // ---- State ----
     let lastHooks = [];
     let lastScript = "";
     let tab = "hooks";
 
-    // ---- Toast ----
     function toast(msg="Kopiert ✅"){
       const t = document.getElementById("toast");
       t.textContent = msg;
@@ -590,7 +865,6 @@
       setTimeout(()=>t.classList.remove("show"), 900);
     }
 
-    // ---- Copy (works even if clipboard API is blocked) ----
     function fallbackCopy(text){
       const ta = document.createElement("textarea");
       ta.value = text;
@@ -613,7 +887,6 @@
       }
     }
 
-    // ---- Local "login" (MVP) ----
     function getUser(){
       return JSON.parse(localStorage.getItem("hg_user") || "null");
     }
@@ -634,12 +907,19 @@
       setUser({ name: name.trim(), email: email.trim(), id });
     };
 
-    // ---- Daily limit UI (stored after calls) ----
     function setLimitUI(remaining, limit){
       document.getElementById("remaining").textContent = (remaining ?? "–");
       document.getElementById("limit").textContent = (limit ?? "–");
-      if (typeof remaining === "number") localStorage.setItem("hg_remaining", String(remaining));
-      if (typeof limit === "number") localStorage.setItem("hg_limit", String(limit));
+
+      // hero bar
+      const bar = document.getElementById("usageBar");
+      if(typeof remaining === "number" && typeof limit === "number" && limit > 0){
+        const used = Math.max(0, Math.min(limit, limit - remaining));
+        const pct = Math.max(6, Math.min(100, Math.round((used / limit) * 100)));
+        bar.style.width = pct + "%";
+        localStorage.setItem("hg_remaining", String(remaining));
+        localStorage.setItem("hg_limit", String(limit));
+      }
     }
 
     function loadLimitUI(){
@@ -648,7 +928,6 @@
       if(r && l) setLimitUI(parseInt(r,10), parseInt(l,10));
     }
 
-    // ---- Tabs ----
     window.setTab = function setTab(next){
       tab = next;
       document.getElementById("tabHooks").classList.toggle("active", next==="hooks");
@@ -657,7 +936,6 @@
       document.getElementById("panelScript").style.display = next==="script" ? "block" : "none";
     };
 
-    // ---- History ----
     const HISTORY_KEY = "hg_history";
     const AUTORUN_KEY = "hg_autorun";
 
@@ -684,7 +962,6 @@
     function getAutoRun(){
       return localStorage.getItem(AUTORUN_KEY) === "1";
     }
-
     window.toggleAutoRun = function toggleAutoRun(){
       const v = getAutoRun() ? "0" : "1";
       localStorage.setItem(AUTORUN_KEY, v);
@@ -723,7 +1000,6 @@
       if(getAutoRun()) generateHooks();
     };
 
-    // ---- Quick set topic ----
     window.setTopic = function setTopic(v){
       document.getElementById("userInput").value = v;
       document.getElementById("userInput").focus();
@@ -737,7 +1013,6 @@
       toast("Beispiel gesetzt");
     };
 
-    // ---- Share Link ----
     function buildShareParams(obj){
       const p = new URLSearchParams();
       p.set("topic", obj.topic);
@@ -783,7 +1058,6 @@
       if(topic && getAutoRun()) generateHooks();
     }
 
-    // ---- Hooks UI helpers ----
     window.clearHooks = function clearHooks(){
       lastHooks = [];
       document.getElementById("outputHooks").innerHTML = `
@@ -816,7 +1090,6 @@
       await generateScript();
     };
 
-    // ---- Generate Hooks ----
     window.generateHooks = async function generateHooks(){
       const topic = document.getElementById("userInput").value.trim();
       const style = document.getElementById("style").value;
@@ -833,7 +1106,7 @@
 
       btn.disabled = true;
       btn.innerHTML = `Generiere… ⏳`;
-      out.innerHTML = `<div class="hint">KI arbeitet… (Render Free kann beim ersten Mal ~20–50s dauern)</div>`;
+      out.innerHTML = `<div class="hint">KI arbeitet… (beim ersten Call kann es kurz dauern)</div>`;
 
       try{
         const res = await fetch(API_HOOKS, {
@@ -872,7 +1145,7 @@
               </li>
             `).join("")}
           </ul>
-          <div class="hint">Pro-Move: Hook #1 → Script bauen → sofort posten.</div>
+          <div class="hint">Pro-Move: Hook #1 → Script bauen → posten.</div>
         `;
       }catch(err){
         out.innerHTML = `<div class="err">Fehler: ${escapeHtml(err.message)}</div>`;
@@ -882,7 +1155,6 @@
       }
     };
 
-    // ---- Script UI helpers ----
     window.clearScript = function clearScript(){
       lastScript = "";
       document.getElementById("outputScript").innerHTML = `
@@ -903,7 +1175,6 @@
       toast(ok ? "Script kopiert ✅" : "Copy blockiert ❌");
     };
 
-    // ---- Generate Script ----
     window.generateScript = async function generateScript(){
       const hook = document.getElementById("hookInput").value.trim();
       const topic = document.getElementById("userInput").value.trim();
@@ -939,7 +1210,7 @@
             </div>
           </div>
           <pre style="white-space:pre-wrap; margin:12px 0 0; font-family:inherit;">${escapeHtml(lastScript)}</pre>
-          <div class="hint">Optional: Als nächstes bauen wir Caption + Hashtags + CTA Varianten.</div>
+          <div class="hint">Next: Caption + Hashtags + CTA-Varianten.</div>
         `;
       }catch(err){
         out.innerHTML = `<div class="err">Fehler: ${escapeHtml(err.message)}</div>`;
@@ -949,7 +1220,6 @@
       }
     };
 
-    // ---- Enter key triggers generate on hooks tab ----
     document.addEventListener("keydown", (e) => {
       if(e.key === "Enter" && tab === "hooks"){
         const active = document.activeElement?.tagName?.toLowerCase();
@@ -957,7 +1227,6 @@
       }
     });
 
-    // ---- Easter egg ----
     window.showLove = function showLove(){
       const el = document.getElementById("loveOverlay");
       el.style.display = "flex";
@@ -967,17 +1236,21 @@
       setTimeout(()=>{ el.style.display="none"; }, 2200);
     };
 
-    // ---- Init ----
     (function init(){
-      // autorun label
-      document.getElementById("autoRunTxt").textContent = getAutoRun() ? "An" : "Aus";
+      document.getElementById("autoRunTxt").textContent = (localStorage.getItem("hg_autorun")==="1") ? "An" : "Aus";
       renderHistory();
       loadLimitUI();
       applyFromURL();
-      // default output boxes
       clearHooks();
       clearScript();
+      // default usage bar if unknown
+      const bar = document.getElementById("usageBar");
+      if(bar && !bar.style.width) bar.style.width = "18%";
     })();
   </script>
+
+  <!-- Easter zone -->
+  <div id="easterZone" onclick="showLove()"></div>
+  <div id="loveOverlay">Seni seviyorum hayatim</div>
 </body>
 </html>
