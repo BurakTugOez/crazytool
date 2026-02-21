@@ -1,733 +1,202 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CrazyTool – Hooks & Scripts</title>
-  <style>
-    :root{
-      --bg1:#0b1224; --bg2:#0f1b35;
-      --card: rgba(255,255,255,0.06);
-      --stroke: rgba(255,255,255,0.14);
-      --text:#e6eefc; --muted:#9fb0cc;
-      --green:#22c55e; --green2:#16a34a;
-      --shadow: 0 18px 60px rgba(0,0,0,0.45);
-      --danger:#ef4444;
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color: var(--text);
-      min-height:100vh;
-      background:
-        radial-gradient(1200px 600px at 20% 20%, rgba(34,197,94,0.18), transparent 60%),
-        radial-gradient(900px 500px at 80% 10%, rgba(56,189,248,0.12), transparent 55%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      display:flex;
-      justify-content:center;
-      padding:56px 16px;
-    }
-    .wrap{ width:min(1020px, 100%); }
-    .top{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
-      margin-bottom:18px;
-    }
-    .brand{ display:flex; gap:12px; align-items:center; }
-    .logo{
-      width:44px; height:44px; border-radius:14px;
-      background: linear-gradient(135deg, rgba(34,197,94,0.9), rgba(56,189,248,0.7));
-      box-shadow: 0 10px 30px rgba(34,197,94,0.18);
-    }
-    h1{ margin:0; font-size:28px; letter-spacing:0.2px;}
-    .sub{ margin:2px 0 0; color:var(--muted); font-size:14px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hook Generator</title>
 
-    .badge{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,0.05);
-      padding:12px;
-      border-radius:14px;
-      color: var(--muted);
-      font-size:13px;
-      line-height:1.3;
-      max-width:420px;
-    }
-    .grid{
-      display:grid;
-      grid-template-columns: 1.35fr 0.65fr;
-      gap:16px;
-    }
-    @media (max-width: 920px){
-      .grid{ grid-template-columns: 1fr; }
-      .badge{ max-width:none; }
-    }
-    .card{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-    }
-    .head{ padding:16px 16px 0; display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .body{ padding:16px; }
-    .label{ color:var(--muted); font-size:12px; margin:0 0 8px; }
-    .row{ display:flex; gap:10px; }
-    input, select, textarea{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.25);
-      color: var(--text);
-      outline:none;
-      font-size:15px;
-    }
-    textarea{ min-height:120px; resize:vertical; }
-    input::placeholder{ color: rgba(159,176,204,0.7); }
+<style>
+:root{
+  --bg1:#0b1224;
+  --bg2:#0f1b35;
+  --card: rgba(255,255,255,0.06);
+  --stroke: rgba(255,255,255,0.14);
+  --text:#e6eefc;
+  --muted:#9fb0cc;
+  --green:#22c55e;
+  --green2:#16a34a;
+}
 
-    .btn{
-      border:none;
-      background: linear-gradient(180deg, var(--green), var(--green2));
-      color:#052e16;
-      font-weight:900;
-      padding:12px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      min-width: 160px;
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      box-shadow: 0 14px 30px rgba(34,197,94,0.18);
-    }
-    .btn:disabled{ opacity:0.6; cursor:not-allowed; }
-    .btn2{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      font-weight:800;
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      white-space:nowrap;
-    }
-    .tabs{ display:flex; gap:8px; }
-    .tab{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      font-weight:800;
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-    }
-    .tab.active{ outline: 2px solid rgba(34,197,94,0.35); }
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  background: linear-gradient(180deg,var(--bg1),var(--bg2));
+  display:flex;
+  justify-content:center;
+  padding:50px 16px;
+}
 
-    .meta{
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap:10px;
-      margin-top:12px;
-    }
-    @media (max-width: 520px){
-      .meta{ grid-template-columns: 1fr; }
-      .btn{ min-width: 120px; }
-    }
+.wrap{width:900px}
 
-    .out{
-      margin-top:14px;
-      padding:14px;
-      border-radius:16px;
-      background: rgba(0,0,0,0.22);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-    .outTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .hint{ color:var(--muted); font-size:13px; margin-top:8px; }
-    .err{ color:#fecaca; font-size:13px; margin-top:8px; }
-    .danger{ color:#fecaca; font-size:13px; margin-top:8px; }
-    ul{ margin:12px 0 0; padding-left:18px; }
-    li{ margin:10px 0; line-height:1.35; }
-    .hookRow{ display:flex; gap:10px; align-items:flex-start; justify-content:space-between; }
-    .copy{
-      white-space:nowrap;
-      font-size:12px;
-      padding:8px 10px;
-      border-radius:12px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      cursor:pointer;
-      font-weight:800;
-    }
-    .pill{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,0.06);
-      padding:8px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color: var(--muted);
-      font-weight:800;
-    }
+h1{margin:0}
 
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 22px;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.65);
-      border: 1px solid rgba(255,255,255,0.18);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-size: 13px;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .2s ease;
-    }
-    .toast.show{ opacity:1; }
+.siteLabel{
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: var(--muted);
+  font-size:12px;
+  font-weight:900;
+}
 
-    .history{
-      display:flex; flex-direction:column; gap:8px;
-      margin-top:10px;
-    }
-    .histItem{
-      display:flex; justify-content:space-between; gap:10px; align-items:center;
-      padding:10px 10px;
-      border:1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
-      border-radius:14px;
-      cursor:pointer;
-    }
-    .histItem b{ font-size:13px; }
-    .histItem span{ color:var(--muted); font-size:12px; }
-  </style>
+.card{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:20px;
+  padding:20px;
+  margin-top:20px;
+}
+
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(0,0,0,0.3);
+  color:white;
+}
+
+button{
+  background:var(--green);
+  color:black;
+  padding:10px 14px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.copyBtn{
+  background:rgba(255,255,255,0.1);
+  color:white;
+  padding:6px 10px;
+  border-radius:10px;
+  margin-left:10px;
+}
+
+ul{margin-top:15px}
+
+#loveOverlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:60px;
+  font-weight:900;
+  background:rgba(0,0,0,0.5);
+  animation:loveAnim 2s ease forwards;
+}
+
+@keyframes loveAnim{
+  0%{opacity:0;transform:scale(0.5)}
+  50%{opacity:1;transform:scale(1.2)}
+  100%{opacity:0;transform:scale(1)}
+}
+
+#easterZone{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100px;
+  height:100px;
+  opacity:0;
+  cursor:pointer;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <h1>CrazyTool</h1>
-          <div class="sub">Hooks + Scripts in Sekunden – mit History, Share-Link & Daily Free-Limit.</div>
-        </div>
-      </div>
 
-      <div class="badge">
-        <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
-          <span class="pill">Free today: <span id="remaining">–</span>/<span id="limit">–</span></span>
-          <button class="btn2" onclick="openLogin()">Login</button>
-        </div>
-        <div class="hint" style="margin:10px 0 0">
-          Login ist „light“ (nur local). Für echtes SaaS später: echte Auth (z.B. Clerk/Auth0).
-        </div>
-      </div>
-    </div>
+<div class="wrap">
 
-    <div class="grid">
-      <div class="card">
-        <div class="head">
-          <div class="tabs">
-            <button class="tab active" id="tabHooks" onclick="setTab('hooks')">Hooks</button>
-            <button class="tab" id="tabScript" onclick="setTab('script')">Hook → Script</button>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn2" onclick="shareLink()">Share</button>
-            <button class="btn2" onclick="fillExample()">Beispiel</button>
-          </div>
-        </div>
+<h1>Hook Generator</h1>
+<div class="siteLabel">✨ by Tugi</div>
 
-        <div class="body">
-          <!-- Hooks panel -->
-          <div id="panelHooks">
-            <div class="label">Thema</div>
-            <div class="row">
-              <input id="userInput" type="text" placeholder="z.B. Beziehung, Geld, Fitness, KI Videos..." />
-              <button class="btn" id="genBtn" onclick="generateHooks()"><span>Generieren</span> <span>⚡</span></button>
-            </div>
+<div class="card">
 
-            <div class="meta">
-              <div>
-                <div class="label">Stil</div>
-                <select id="style">
-                  <option value="neugierig" selected>Neugierig</option>
-                  <option value="provokant">Provokant</option>
-                  <option value="story">Story</option>
-                  <option value="fakten">Fakten</option>
-                </select>
-              </div>
-              <div>
-                <div class="label">Plattform</div>
-                <select id="platform">
-                  <option value="tiktok" selected>TikTok</option>
-                  <option value="reels">Reels</option>
-                  <option value="youtube">YouTube</option>
-                </select>
-              </div>
-              <div>
-                <div class="label">Anzahl</div>
-                <select id="count">
-                  <option value="3" selected>3</option>
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                </select>
-              </div>
-            </div>
+<input id="topic" placeholder="Thema eingeben...">
 
-            <div class="out" id="outputHooks">
-              <div class="outTop">
-                <strong>Ergebnis</strong>
-                <div style="display:flex; gap:8px;">
-                  <button class="copy" onclick="copyAll()">Alles kopieren</button>
-                  <button class="copy" onclick="clearHooks()">Leeren</button>
-                </div>
-              </div>
-              <div class="hint">Noch leer…</div>
-            </div>
-          </div>
+<br><br>
 
-          <!-- Script panel -->
-          <div id="panelScript" style="display:none;">
-            <div class="label">Hook (oder lass leer und nutz Thema)</div>
-            <textarea id="hookInput" placeholder="Füge hier einen Hook ein…"></textarea>
+<select id="style">
+<option value="neugierig">Neugierig</option>
+<option value="provokant">Provokant</option>
+<option value="story">Story</option>
+<option value="fakten">Fakten</option>
+</select>
 
-            <div class="meta" style="margin-top:10px;">
-              <div>
-                <div class="label">Plattform</div>
-                <select id="platform2">
-                  <option value="tiktok" selected>TikTok</option>
-                  <option value="reels">Reels</option>
-                  <option value="youtube">YouTube</option>
-                </select>
-              </div>
-              <div>
-                <div class="label">Ton</div>
-                <select id="tone">
-                  <option value="direkt" selected>Direkt</option>
-                  <option value="freundlich">Freundlich</option>
-                  <option value="hart">Hart</option>
-                  <option value="story">Story-Style</option>
-                </select>
-              </div>
-              <div>
-                <div class="label">Aktion</div>
-                <button class="btn" id="scriptBtn" onclick="generateScript()"><span>Script bauen</span> <span>📝</span></button>
-              </div>
-            </div>
+<br><br>
 
-            <div class="out" id="outputScript">
-              <div class="outTop">
-                <strong>Script</strong>
-                <div style="display:flex; gap:8px;">
-                  <button class="copy" onclick="copyScript()">Copy</button>
-                  <button class="copy" onclick="clearScript()">Leeren</button>
-                </div>
-              </div>
-              <div class="hint">Noch leer…</div>
-            </div>
-          </div>
-        </div>
-      </div>
+<button onclick="generate()">Generieren ⚡</button>
 
-      <!-- Right column -->
-      <div class="card">
-        <div class="head"><strong>History</strong></div>
-        <div class="body">
-          <div class="hint" style="margin-top:0">
-            Klick auf einen Eintrag → füllt Thema + Einstellungen und generiert auf Wunsch neu.
-          </div>
+<div id="result"></div>
 
-          <div class="history" id="history"></div>
+</div>
 
-          <div style="margin-top:14px; display:flex; gap:8px;">
-            <button class="btn2" onclick="clearHistory()">History löschen</button>
-            <button class="btn2" onclick="setAutoRun()">Auto-Run: <span id="autoRunTxt">Aus</span></button>
-          </div>
+</div>
 
-          <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.12); padding-top:14px;">
-            <div class="label">Schnelltests</div>
-            <div style="display:flex; flex-wrap:wrap; gap:8px;">
-              <button class="copy" onclick="setTopic('Beziehung')">Beziehung</button>
-              <button class="copy" onclick="setTopic('Geld sparen')">Geld sparen</button>
-              <button class="copy" onclick="setTopic('Fitness')">Fitness</button>
-              <button class="copy" onclick="setTopic('KI Videos')">KI Videos</button>
-              <button class="copy" onclick="setTopic('Selbstbewusstsein')">Selbstbewusstsein</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<div id="loveOverlay">Seni seviyorum hayatim ❤️</div>
+<div id="easterZone" onclick="showLove()"></div>
 
-    <div class="toast" id="toast">Kopiert ✅</div>
-  </div>
+<script>
+const API="https://crazytool.onrender.com/api/hooks";
+let lastHooks=[];
 
-  <script>
-    const API_BASE = "https://crazytool.onrender.com";
-    const API_HOOKS = API_BASE + "/api/hooks";
-    const API_SCRIPT = API_BASE + "/api/script";
+async function safeCopy(text){
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch{
+    const ta=document.createElement("textarea");
+    ta.value=text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+  }
+}
 
-    let lastHooks = [];
-    let lastScript = "";
-    let currentTab = "hooks";
+window.generate=async function(){
+  const topic=document.getElementById("topic").value;
+  const style=document.getElementById("style").value;
 
-    // ---------- Local "login" ----------
-    function getUser(){
-      return JSON.parse(localStorage.getItem("ct_user") || "null");
-    }
-    function setUser(u){
-      localStorage.setItem("ct_user", JSON.stringify(u));
-      toast("Login gespeichert");
-      refreshLimitUI();
-    }
-    function getUserId(){
-      const u = getUser();
-      return u?.id || "";
-    }
-    function openLogin(){
-      const u = getUser();
-      const name = prompt("Name (optional):", u?.name || "") ?? "";
-      const email = prompt("E-Mail (für Free-Limit, local):", u?.email || "") ?? "";
-      // simple id: email lowercased
-      const id = (email || "").trim().toLowerCase();
-      setUser({ name: name.trim(), email: email.trim(), id });
-    }
+  const res=await fetch(API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({topic,style})
+  });
 
-    // ---------- Toast ----------
-    function toast(msg="Kopiert ✅"){
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(()=>t.classList.remove("show"), 900);
-    }
+  const data=await res.json();
+  const hooks=data.hooks||[];
+  lastHooks=hooks;
 
-    // ---------- Tabs ----------
-    function setTab(tab){
-      currentTab = tab;
-      document.getElementById("tabHooks").classList.toggle("active", tab==="hooks");
-      document.getElementById("tabScript").classList.toggle("active", tab==="script");
-      document.getElementById("panelHooks").style.display = tab==="hooks" ? "block" : "none";
-      document.getElementById("panelScript").style.display = tab==="script" ? "block" : "none";
-    }
+  let html="<ul>";
+  hooks.forEach(h=>{
+    html+=`<li>${h}
+      <button class="copyBtn" onclick="copyOne('${h.replace(/'/g,"")}')">Copy</button>
+    </li>`;
+  });
+  html+="</ul>";
 
-    // ---------- History ----------
-    const HISTORY_KEY = "ct_history";
-    const AUTORUN_KEY = "ct_autorun";
+  document.getElementById("result").innerHTML=html;
+}
 
-    function loadHistory(){
-      return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-    }
-    function saveHistory(items){
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, 10)));
-      renderHistory();
-    }
-    function addHistory(item){
-      const items = loadHistory();
-      const filtered = items.filter(x => !(x.topic===item.topic && x.style===item.style && x.platform===item.platform && x.count===item.count));
-      filtered.unshift({ ...item, ts: Date.now() });
-      saveHistory(filtered);
-    }
-    function clearHistory(){
-      localStorage.removeItem(HISTORY_KEY);
-      renderHistory();
-      toast("History gelöscht");
-    }
-    function getAutoRun(){
-      return localStorage.getItem(AUTORUN_KEY) === "1";
-    }
-    function setAutoRun(){
-      const v = getAutoRun() ? "0" : "1";
-      localStorage.setItem(AUTORUN_KEY, v);
-      document.getElementById("autoRunTxt").textContent = getAutoRun() ? "An" : "Aus";
-      toast("Auto-Run geändert");
-    }
+window.copyOne=async function(t){
+  await safeCopy(t);
+  alert("Kopiert ✅");
+}
 
-    function renderHistory(){
-      const el = document.getElementById("history");
-      const items = loadHistory();
-      if(!items.length){
-        el.innerHTML = `<div class="hint">Noch keine Einträge…</div>`;
-        return;
-      }
-      el.innerHTML = items.map(i => `
-        <div class="histItem" onclick='applyHistory(${JSON.stringify(i).replace(/'/g,"&#39;")})'>
-          <div>
-            <b>${escapeHtml(i.topic)}</b><br/>
-            <span>${escapeHtml(i.style)} · ${escapeHtml(i.platform)} · ${i.count}</span>
-          </div>
-          <button class="copy" onclick="event.stopPropagation(); shareLinkFrom(${JSON.stringify(i).replace(/'/g,"&#39;")})">Share</button>
-        </div>
-      `).join("");
-    }
+window.showLove=function(){
+  const el=document.getElementById("loveOverlay");
+  el.style.display="flex";
+  setTimeout(()=>el.style.display="none",2000);
+}
+</script>
 
-    function applyHistory(i){
-      document.getElementById("userInput").value = i.topic;
-      document.getElementById("style").value = i.style;
-      document.getElementById("platform").value = i.platform;
-      document.getElementById("count").value = String(i.count);
-      setTab("hooks");
-      if(getAutoRun()) generateHooks();
-    }
-
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-    }
-
-    // ---------- Share link ----------
-    function buildShareParams(obj){
-      const p = new URLSearchParams();
-      p.set("topic", obj.topic);
-      p.set("style", obj.style);
-      p.set("platform", obj.platform);
-      p.set("count", String(obj.count));
-      p.set("tab", obj.tab || "hooks");
-      return p.toString();
-    }
-
-    async function shareLink(){
-      const obj = {
-        topic: document.getElementById("userInput").value.trim(),
-        style: document.getElementById("style").value,
-        platform: document.getElementById("platform").value,
-        count: parseInt(document.getElementById("count").value, 10),
-        tab: currentTab
-      };
-      if(!obj.topic){ toast("Erst Thema eingeben"); return; }
-      const url = location.origin + location.pathname + "?" + buildShareParams(obj);
-      await navigator.clipboard.writeText(url);
-      toast("Share-Link kopiert ✅");
-    }
-
-    async function shareLinkFrom(i){
-      const url = location.origin + location.pathname + "?" + buildShareParams({ ...i, tab:"hooks" });
-      await navigator.clipboard.writeText(url);
-      toast("Share-Link kopiert ✅");
-    }
-
-    function applyFromURL(){
-      const q = new URLSearchParams(location.search);
-      const topic = q.get("topic");
-      const style = q.get("style");
-      const platform = q.get("platform");
-      const count = q.get("count");
-      const tab = q.get("tab");
-      if(tab) setTab(tab);
-
-      if(topic) document.getElementById("userInput").value = topic;
-      if(style) document.getElementById("style").value = style;
-      if(platform) document.getElementById("platform").value = platform;
-      if(count) document.getElementById("count").value = count;
-
-      // optional autorun via local setting only
-      if(topic && getAutoRun()) generateHooks();
-    }
-
-    // ---------- Limit UI ----------
-    function setLimitUI(remaining, limit){
-      document.getElementById("remaining").textContent = (remaining ?? "–");
-      document.getElementById("limit").textContent = (limit ?? "–");
-    }
-
-    async function refreshLimitUI(){
-      // We only know remaining after a call; keep it simple.
-      // If you want, we can add a /api/usage endpoint later.
-      const r = localStorage.getItem("ct_remaining");
-      const l = localStorage.getItem("ct_limit");
-      if(r && l) setLimitUI(r, l);
-    }
-
-    function saveLimitUI(remaining, limit){
-      if(typeof remaining === "number") localStorage.setItem("ct_remaining", String(remaining));
-      if(typeof limit === "number") localStorage.setItem("ct_limit", String(limit));
-      setLimitUI(remaining, limit);
-    }
-
-    // ---------- Hooks ----------
-    function setTopic(v){
-      document.getElementById("userInput").value = v;
-      document.getElementById("userInput").focus();
-    }
-
-    function fillExample(){
-      setTopic("KI Videos");
-      document.getElementById("style").value = "provokant";
-      document.getElementById("platform").value = "tiktok";
-      document.getElementById("count").value = "10";
-      toast("Beispiel gesetzt");
-    }
-
-    function clearHooks(){
-      lastHooks = [];
-      const out = document.getElementById("outputHooks");
-      out.innerHTML = `
-        <div class="outTop">
-          <strong>Ergebnis</strong>
-          <div style="display:flex; gap:8px;">
-            <button class="copy" onclick="copyAll()">Alles kopieren</button>
-            <button class="copy" onclick="clearHooks()">Leeren</button>
-          </div>
-        </div>
-        <div class="hint">Noch leer…</div>
-      `;
-    }
-
-    async function copyAll(){
-      if(!lastHooks.length){ toast("Nichts zum Kopieren"); return; }
-      await navigator.clipboard.writeText(lastHooks.join("\n"));
-      toast("Alles kopiert ✅");
-    }
-
-    async function copyOne(text){
-      await navigator.clipboard.writeText(text);
-      toast("Kopiert ✅");
-    }
-
-    async function makeScriptFromHook(h){
-      setTab("script");
-      document.getElementById("hookInput").value = h;
-      document.getElementById("platform2").value = document.getElementById("platform").value;
-      await generateScript();
-    }
-
-    async function generateHooks(){
-      const topic = document.getElementById("userInput").value.trim();
-      const style = document.getElementById("style").value;
-      const platform = document.getElementById("platform").value;
-      const count = parseInt(document.getElementById("count").value, 10);
-
-      const out = document.getElementById("outputHooks");
-      const btn = document.getElementById("genBtn");
-
-      if(!topic){
-        out.innerHTML = `<div class="hint">Bitte erst ein Thema eingeben 🙂</div>`;
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerHTML = `<span>Generiere…</span> <span>⏳</span>`;
-      out.innerHTML = `<div class="hint">KI arbeitet… (Render Free kann beim ersten Mal ~20–50s dauern)</div>`;
-
-      try{
-        const res = await fetch(API_HOOKS, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic, style, platform, count, userId: getUserId() })
-        });
-
-        const data = await res.json();
-        if(!res.ok) throw new Error(data?.error || "Fehler");
-
-        const hooks = Array.isArray(data.hooks) ? data.hooks : [];
-        lastHooks = hooks;
-
-        saveLimitUI(data.remaining, data.limit);
-
-        addHistory({ topic, style, platform, count });
-
-        out.innerHTML = `
-          <div class="outTop">
-            <strong>Ergebnis</strong>
-            <div style="display:flex; gap:8px;">
-              <button class="copy" onclick="copyAll()">Alles kopieren</button>
-              <button class="copy" onclick="clearHooks()">Leeren</button>
-            </div>
-          </div>
-          <ul>
-            ${hooks.map(h => `
-              <li>
-                <div class="hookRow">
-                  <div>${escapeHtml(h)}</div>
-                  <div style="display:flex; gap:8px;">
-                    <button class="copy" onclick="copyOne(${JSON.stringify(h)})">Copy</button>
-                    <button class="copy" onclick="makeScriptFromHook(${JSON.stringify(h)})">Script</button>
-                  </div>
-                </div>
-              </li>
-            `).join("")}
-          </ul>
-          <div class="hint">Pro-Move: Nimm Hook #1, bau daraus ein Script → dann sofort posten.</div>
-        `;
-      } catch(err){
-        out.innerHTML = `
-          <div class="danger">Fehler: ${escapeHtml(err.message)}</div>
-          <div class="hint">Wenn es beim ersten Klick hängt: Render Free „wacht“ manchmal erst auf.</div>
-        `;
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<span>Generieren</span> <span>⚡</span>`;
-      }
-    }
-
-    // ---------- Script ----------
-    function clearScript(){
-      lastScript = "";
-      const out = document.getElementById("outputScript");
-      out.innerHTML = `<div class="hint">Noch leer…</div>`;
-    }
-
-    async function copyScript(){
-      if(!lastScript){ toast("Nichts zum Kopieren"); return; }
-      await navigator.clipboard.writeText(lastScript);
-      toast("Script kopiert ✅");
-    }
-
-    async function generateScript(){
-      const hook = document.getElementById("hookInput").value.trim();
-      const topic = document.getElementById("userInput").value.trim();
-      const platform = document.getElementById("platform2").value;
-      const tone = document.getElementById("tone").value;
-
-      const btn = document.getElementById("scriptBtn");
-      const out = document.getElementById("outputScript");
-
-      btn.disabled = true;
-      btn.innerHTML = `<span>Baue…</span> <span>⏳</span>`;
-      out.innerHTML = `<div class="hint">Script wird erstellt…</div>`;
-
-      try{
-        const res = await fetch(API_SCRIPT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ hook, topic, platform, tone, userId: getUserId() })
-        });
-
-        const data = await res.json();
-        if(!res.ok) throw new Error(data?.error || "Fehler");
-
-        lastScript = data.script || "";
-        saveLimitUI(data.remaining, data.limit);
-
-        out.innerHTML = `
-          <div class="outTop">
-            <strong>Script</strong>
-            <div style="display:flex; gap:8px;">
-              <button class="copy" onclick="copyScript()">Copy</button>
-              <button class="copy" onclick="clearScript()">Leeren</button>
-            </div>
-          </div>
-          <pre style="white-space:pre-wrap; margin:12px 0 0; color:var(--text); font-family:inherit;">${escapeHtml(lastScript)}</pre>
-          <div class="hint">Wenn du willst, bauen wir als nächstes: Caption + Hashtags + CTA-Varianten.</div>
-        `;
-      } catch(err){
-        out.innerHTML = `
-          <div class="danger">Fehler: ${escapeHtml(err.message)}</div>
-        `;
-      } finally{
-        btn.disabled = false;
-        btn.innerHTML = `<span>Script bauen</span> <span>📝</span>`;
-      }
-    }
-
-    // ---------- Keyboard ----------
-    document.getElementById("userInput").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && currentTab === "hooks") generateHooks();
-    });
-
-    // ---------- Init ----------
-    document.getElementById("autoRunTxt").textContent = getAutoRun() ? "An" : "Aus";
-    renderHistory();
-    refreshLimitUI();
-    applyFromURL();
-  </script>
 </body>
 </html>
