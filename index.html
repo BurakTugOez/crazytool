@@ -2,114 +2,422 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>🔥🔥 TEST TUGI 🔥🔥</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CrazyTool – Hook Generator</title>
   <style>
+    :root{
+      --bg1:#0b1224;
+      --bg2:#0f1b35;
+      --card: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.14);
+      --text:#e6eefc;
+      --muted:#9fb0cc;
+      --green:#22c55e;
+      --green2:#16a34a;
+      --red:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,0.45);
+    }
+    *{ box-sizing:border-box; }
     body{
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 20% 20%, rgba(34,197,94,0.18), transparent 60%),
+        radial-gradient(900px 500px at 80% 10%, rgba(56,189,248,0.12), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
       display:flex;
       justify-content:center;
-      padding:60px 16px;
+      padding:56px 16px;
     }
+    .wrap{ width:min(980px, 100%); }
+    .top{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+      margin-bottom:18px;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(34,197,94,0.9), rgba(56,189,248,0.7));
+      box-shadow: 0 10px 30px rgba(34,197,94,0.18);
+    }
+    h1{ margin:0; font-size:28px; letter-spacing:0.2px;}
+    .sub{ margin:2px 0 0; color:var(--muted); font-size:14px; }
+    .badge{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.05);
+      padding:10px 12px;
+      border-radius:14px;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.3;
+      max-width:360px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap:16px;
+    }
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+      .badge{ max-width:none; }
+    }
+
     .card{
-      width: min(720px, 100%);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 18px;
-      padding: 26px;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
     }
-    h1{ margin:0 0 6px; font-size: 26px; }
-    p{ margin:0 0 18px; color:#94a3b8; }
+    .card .head{
+      padding:18px 18px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .card .body{ padding:18px; }
+
+    .label{ color:var(--muted); font-size:12px; margin:0 0 8px; }
     .row{ display:flex; gap:10px; }
-    input{
-      flex:1;
-      padding: 12px 14px;
-      border-radius: 12px;
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
       border: 1px solid rgba(255,255,255,0.18);
       background: rgba(0,0,0,0.25);
-      color:#e2e8f0;
+      color: var(--text);
       outline:none;
-      font-size: 16px;
+      font-size:15px;
     }
-    button{
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: none;
-      background: #22c55e;
+    input::placeholder{ color: rgba(159,176,204,0.7); }
+
+    .btn{
+      border:none;
+      background: linear-gradient(180deg, var(--green), var(--green2));
       color:#052e16;
-      font-weight: 700;
+      font-weight:800;
+      padding:12px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      min-width: 160px;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      box-shadow: 0 14px 30px rgba(34,197,94,0.18);
+    }
+    .btn:disabled{ opacity:0.6; cursor:not-allowed; }
+    .btn2{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-weight:700;
+      padding:10px 12px;
+      border-radius:14px;
       cursor:pointer;
     }
-    button:hover{ filter: brightness(1.05); }
+
+    .meta{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width: 520px){
+      .meta{ grid-template-columns: 1fr; }
+      .btn{ min-width: 120px; }
+    }
+
     .out{
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 14px;
-      background: rgba(0,0,0,0.25);
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      background: rgba(0,0,0,0.22);
       border: 1px solid rgba(255,255,255,0.12);
     }
-    ul{ margin: 10px 0 0; padding-left: 18px; }
-    li{ margin: 8px 0; }
-    .hint{ font-size: 13px; color:#94a3b8; margin-top:10px; }
+    .outTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .hint{ color:var(--muted); font-size:13px; margin-top:8px; }
+    .err{ color:#fecaca; font-size:13px; margin-top:8px; }
+
+    ul{ margin:12px 0 0; padding-left:18px; }
+    li{ margin:10px 0; line-height:1.35; }
+    .hookRow{
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+    }
+    .copy{
+      white-space:nowrap;
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      cursor:pointer;
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.65);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease;
+    }
+    .toast.show{ opacity:1; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Mini Tool</h1>
-    <p>Mach virale Hooks in Sekunden 🚀</p>
-
-    <div class="row">
-      <input id="userInput" type="text" placeholder="z.B. Fitness, Beziehung, Geld, KI..." />
-      <button onclick="generate()">Hooks erstellen 🚀</button>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>CrazyTool</h1>
+          <div class="sub">Virale Hooks in Sekunden – für TikTok, Reels & Shorts.</div>
+        </div>
+      </div>
+      <div class="badge">
+        <b>Tipp:</b> Gib ein Thema ein + wähle Stil. Klick auf <b>Generieren</b> und kopier die Hooks direkt.
+      </div>
     </div>
 
-    <div class="out" id="output">
-      <strong>Ergebnis:</strong>
-      <div class="hint">Noch leer…</div>
+    <div class="grid">
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="label">Thema</div>
+            <div class="row">
+              <input id="userInput" type="text" placeholder="z.B. Beziehung, Geld, Fitness, KI Videos..." />
+              <button class="btn" id="genBtn" onclick="generate()">
+                <span>Generieren</span> <span>⚡</span>
+              </button>
+            </div>
+
+            <div class="meta">
+              <div>
+                <div class="label">Stil</div>
+                <select id="style">
+                  <option value="neugierig" selected>Neugierig</option>
+                  <option value="provokant">Provokant</option>
+                  <option value="story">Story</option>
+                  <option value="fakten">Fakten</option>
+                </select>
+              </div>
+              <div>
+                <div class="label">Plattform</div>
+                <select id="platform">
+                  <option value="tiktok" selected>TikTok</option>
+                  <option value="reels">Reels</option>
+                  <option value="youtube">YouTube</option>
+                </select>
+              </div>
+              <div>
+                <div class="label">Anzahl</div>
+                <select id="count">
+                  <option value="3" selected>3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <button class="btn2" onclick="fillExample()">Beispiel</button>
+        </div>
+
+        <div class="body">
+          <div class="out" id="output">
+            <div class="outTop">
+              <strong>Ergebnis</strong>
+              <div style="display:flex; gap:8px;">
+                <button class="copy" onclick="copyAll()">Alles kopieren</button>
+                <button class="copy" onclick="clearOut()">Leeren</button>
+              </div>
+            </div>
+            <div class="hint">Noch leer…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <strong>So nutzt du’s</strong>
+        </div>
+        <div class="body">
+          <div class="hint" style="margin-top:0">
+            1) Thema eingeben<br/>
+            2) Stil wählen<br/>
+            3) Hooks kopieren<br/><br/>
+            <b>Pro Move:</b> Nimm Hook #1 als Video-Start und erklär’s in 30–45 Sekunden.
+          </div>
+
+          <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.12); padding-top:14px;">
+            <div class="label">Ideen zum Testen</div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+              <button class="copy" onclick="setTopic('Beziehung')">Beziehung</button>
+              <button class="copy" onclick="setTopic('Geld sparen')">Geld sparen</button>
+              <button class="copy" onclick="setTopic('Fitness')">Fitness</button>
+              <button class="copy" onclick="setTopic('KI Videos')">KI Videos</button>
+              <button class="copy" onclick="setTopic('Selbstbewusstsein')">Selbstbewusstsein</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="toast" id="toast">Kopiert ✅</div>
   </div>
 
-<script>
-  window.generate = async function generate() {
-    const topic = document.getElementById("userInput").value.trim();
-    const out = document.getElementById("output");
+  <script>
+    const API_URL = "https://crazytool.onrender.com/api/hooks";
+    let lastHooks = [];
 
-    if(!topic){
-      out.innerHTML = "<strong>Ergebnis:</strong><div class='hint'>Bitte erst ein Thema eingeben 🙂</div>";
-      return;
+    function toast(msg="Kopiert ✅"){
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(()=>t.classList.remove("show"), 900);
     }
 
-    out.innerHTML = "<strong>Ergebnis:</strong><div class='hint'>Generiere echte KI-Hooks…</div>";
+    function setTopic(v){
+      document.getElementById("userInput").value = v;
+      document.getElementById("userInput").focus();
+    }
 
-    try{
-      const res = await fetch("https://crazytool.onrender.com/api/hooks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic })
-      });
+    function fillExample(){
+      setTopic("Beziehung");
+      document.getElementById("style").value = "neugierig";
+      document.getElementById("platform").value = "tiktok";
+      document.getElementById("count").value = "5";
+    }
 
-      const data = await res.json();
-      if(!res.ok) throw new Error(data?.error || "Fehler");
-
-      const hooks = Array.isArray(data.hooks) ? data.hooks : [];
-
+    function clearOut(){
+      lastHooks = [];
+      const out = document.getElementById("output");
       out.innerHTML = `
-        <strong>Ergebnis:</strong>
-        <ul>
-          ${hooks.map(h => `<li>${h}</li>`).join("")}
-        </ul>
-        <div class="hint">Echte KI-Antworten ✅</div>
+        <div class="outTop">
+          <strong>Ergebnis</strong>
+          <div style="display:flex; gap:8px;">
+            <button class="copy" onclick="copyAll()">Alles kopieren</button>
+            <button class="copy" onclick="clearOut()">Leeren</button>
+          </div>
+        </div>
+        <div class="hint">Noch leer…</div>
       `;
-    } catch(err){
-      out.innerHTML = `<strong>Ergebnis:</strong><div class="hint">Fehler: ${err.message}</div>`;
     }
-  };
 
-  document.getElementById("userInput").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") window.generate();
-  });
-</script>
+    async function copyAll(){
+      if(!lastHooks.length){ toast("Nichts zum Kopieren"); return; }
+      await navigator.clipboard.writeText(lastHooks.join("\n"));
+      toast("Alles kopiert ✅");
+    }
+
+    async function copyOne(text){
+      await navigator.clipboard.writeText(text);
+      toast();
+    }
+
+    window.generate = async function generate(){
+      const topic = document.getElementById("userInput").value.trim();
+      const style = document.getElementById("style").value;
+      const platform = document.getElementById("platform").value;
+      const count = parseInt(document.getElementById("count").value, 10);
+
+      const out = document.getElementById("output");
+      const btn = document.getElementById("genBtn");
+
+      if(!topic){
+        out.innerHTML = `
+          <div class="outTop">
+            <strong>Ergebnis</strong>
+            <div style="display:flex; gap:8px;">
+              <button class="copy" onclick="copyAll()">Alles kopieren</button>
+              <button class="copy" onclick="clearOut()">Leeren</button>
+            </div>
+          </div>
+          <div class="hint">Bitte erst ein Thema eingeben 🙂</div>
+        `;
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>Generiere…</span> <span>⏳</span>`;
+      out.innerHTML = `
+        <div class="outTop">
+          <strong>Ergebnis</strong>
+          <div style="display:flex; gap:8px;">
+            <button class="copy" onclick="copyAll()">Alles kopieren</button>
+            <button class="copy" onclick="clearOut()">Leeren</button>
+          </div>
+        </div>
+        <div class="hint">KI arbeitet… (bei Render Free kann’s beim ersten Mal ~20–50s dauern)</div>
+      `;
+
+      try{
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topic, style, platform, count })
+        });
+
+        const data = await res.json();
+        if(!res.ok) throw new Error(data?.error || "Fehler");
+
+        const hooks = Array.isArray(data.hooks) ? data.hooks : [];
+        lastHooks = hooks;
+
+        out.innerHTML = `
+          <div class="outTop">
+            <strong>Ergebnis</strong>
+            <div style="display:flex; gap:8px;">
+              <button class="copy" onclick="copyAll()">Alles kopieren</button>
+              <button class="copy" onclick="clearOut()">Leeren</button>
+            </div>
+          </div>
+          <ul>
+            ${hooks.map(h => `
+              <li>
+                <div class="hookRow">
+                  <div>${h}</div>
+                  <button class="copy" onclick="copyOne(${JSON.stringify(h)})">Copy</button>
+                </div>
+              </li>
+            `).join("")}
+          </ul>
+          <div class="hint">Tipp: Teste „Provokant“ + 10 Hooks für richtig starke Variationen.</div>
+        `;
+      } catch(err){
+        out.innerHTML = `
+          <div class="outTop">
+            <strong>Ergebnis</strong>
+            <div style="display:flex; gap:8px;">
+              <button class="copy" onclick="copyAll()">Alles kopieren</button>
+              <button class="copy" onclick="clearOut()">Leeren</button>
+            </div>
+          </div>
+          <div class="err">Fehler: ${err.message}</div>
+          <div class="hint">Wenn es beim ersten Klick hängt: Render Free „wacht“ manchmal erst auf.</div>
+        `;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Generieren</span> <span>⚡</span>`;
+      }
+    };
+
+    document.getElementById("userInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") window.generate();
+    });
+  </script>
 </body>
 </html>
