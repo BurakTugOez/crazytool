@@ -72,11 +72,7 @@
   </div>
 
 <script>
-  document.getElementById("userInput").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") generate();
-  });
-
-  async function generate(){
+  window.generate = async function generate() {
     const topic = document.getElementById("userInput").value.trim();
     const out = document.getElementById("output");
 
@@ -88,7 +84,7 @@
     out.innerHTML = "<strong>Ergebnis:</strong><div class='hint'>Generiere echte KI-Hooks…</div>";
 
     try{
-      const res = await fetch("https://crazytool.onrender.com/api/hooks"), {
+      const res = await fetch("https://crazytool.onrender.com/api/hooks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic })
@@ -107,9 +103,13 @@
         <div class="hint">Echte KI-Antworten ✅</div>
       `;
     } catch(err){
-      out.innerHTML = `<strong>Ergebnis:</strong><div class='hint'>Fehler: ${err.message}</div>`;
+      out.innerHTML = `<strong>Ergebnis:</strong><div class="hint">Fehler: ${err.message}</div>`;
     }
-  }
+  };
+
+  document.getElementById("userInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") window.generate();
+  });
 </script>
 </body>
 </html>
