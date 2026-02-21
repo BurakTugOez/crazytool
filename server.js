@@ -125,17 +125,40 @@ Gib NUR ein JSON-Array von Strings zurück.
       input: prompt,
     });
 
-    const text = (resp.output_text || "").trim();
+    const raw = (resp.output_text || "").trim();
 
-    let hooks;
-    try {
-      hooks = JSON.parse(text);
-    } catch {
-      hooks = text
-        .split("\n")
-        .map((s) => s.replace(/^[\-\d\.\)\s]+/, "").trim())
-        .filter(Boolean)
-        .slice(0, count);
+// 1) Entferne ```json ... ``` oder ``` ... ```
+const cleaned = raw
+  .replace(/```json/gi, "```")
+  .replace(/```/g, "")
+  .trim();
+
+// 2) Versuche: erstes JSON-Array aus dem Text extrahieren
+function extractJSONArray(str) {
+  const start = str.indexOf("[");
+  const end = str.lastIndexOf("]");
+  if (start === -1 || end === -1 || end <= start) return null;
+  return str.slice(start, end + 1);
+}
+
+let hooks = null;
+const maybeArray = extractJSONArray(cleaned);
+
+try {
+  hooks = JSON.parse(maybeArray || cleaned);
+} catch {
+  // Fallback: Zeilen splitten und säubern
+  hooks = cleaned
+    .split("\n")
+    .map((s) => s.replace(/^[\-\d\.\)\s]+/, "").trim())
+    .filter(Boolean)
+    .filter((s) => s !== "[" && s !== "]" && s.toLowerCase() !== "json")
+    .slice(0, count);
+}
+
+// final absichern
+if (!Array.isArray(hooks)) hooks = [];
+hooks = hooks.map(String).map(s => s.trim()).filter(Boolean).slice(0, count);
     }
 
     const remaining = incLimit(req);
