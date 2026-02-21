@@ -11,6 +11,81 @@ app.use(express.json());
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// --------- Simple daily limit (MVP) ----------
+const DAILY_LIMIT = parseInt(process.env.DAILY_LIMIT || "10", 10);
+const usage = new Map(); // key -> { day: "YYYY-MM-DD", count: number }
+
+function todayKey() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function getRequesterKey(req) {
+  // "Login" light: use userId if provided, else IP
+  const userId = (req.body?.userId || req.query?.userId || "").trim();
+  const ip =
+    (req.headers["x-forwarded-for"]?.toString().split(",")[0] || "").trim() ||
+    req.socket.remoteAddress ||
+    "unknown";
+  return userId ? `u:${userId}` : `ip:${ip}`;
+}
+
+function checkLimit(req) {
+  const key = getRequesterKey(req);
+  const day = todayKey();
+  const entry = usage.get(key);
+
+  if (!entry || entry.day !== day) {
+    usage.set(key, { day, count: 0 });
+    return { ok: true, remaining: DAILY_LIMIT };
+  }
+
+  if (entry.count >= DAILY_LIMIT) {
+    return { ok: false, remaining: 0 };
+  }
+
+  return { ok: true, remaining: DAILY_LIMIT - entry.count };
+}
+
+function incLimit(req) {
+  const key = getRequesterKey(req);
+  const day = todayKey();
+  const entry = usage.get(key);
+  if (!entry || entry.day !== day) {
+    usage.set(key, { day, count: 1 });
+    return DAILY_LIMIT - 1;
+  }
+  entry.count += 1;
+  usage.set(key, entry);
+  return Math.max(DAILY_LIMIT - entry.count, 0);
+}
+
+// ---------- Helpers ----------
+const styleMap = {
+  provokant: "provokant, kontrovers, direkt, polarisiert ohne beleidigend zu sein",
+  neugierig: "neugierig machend, geheimnisvoll, cliffhanger",
+  story: "wie ein Mini-Story-Start (ich/du), emotional, relatable",
+  fakten: "mit Zahlen/Beobachtung, sachlich aber spannend",
+};
+
+const platformMap = {
+  tiktok: "TikTok/Reels (kurz, schnell, maximal 12–14 Wörter)",
+  reels: "Instagram Reels (kurz, punchy, maximal 12–14 Wörter)",
+  youtube: "YouTube Shorts (klar, stark, maximal 14 Wörter)",
+};
+
+// ---------- Routes ----------
+app.get("/", (req, res) => {
+  res.send("OK: crazytool backend läuft");
+});
+
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true, day: todayKey(), limit: DAILY_LIMIT });
+});
+
 app.post("/api/hooks", async (req, res) => {
   try {
     const topic = (req.body?.topic || "").trim();
@@ -20,18 +95,14 @@ app.post("/api/hooks", async (req, res) => {
 
     if (!topic) return res.status(400).json({ error: "topic fehlt" });
 
-    const styleMap = {
-      provokant: "provokant, kontrovers, direkt, polarisiert ohne beleidigend zu sein",
-      neugierig: "neugierig machend, geheimnisvoll, cliffhanger",
-      story: "wie ein Mini-Story-Start (ich/du), emotional, relatable",
-      fakten: "mit Zahlen/Beobachtung, sachlich aber spannend",
-    };
-
-    const platformMap = {
-      tiktok: "TikTok/Reels (kurz, schnell, maximal 12–14 Wörter)",
-      reels: "Instagram Reels (kurz, punchy, maximal 12–14 Wörter)",
-      youtube: "YouTube Shorts (klar, stark, maximal 14 Wörter)",
-    };
+    const lim = checkLimit(req);
+    if (!lim.ok) {
+      return res.status(429).json({
+        error: `Tageslimit erreicht (${DAILY_LIMIT}/Tag). Komm morgen wieder 🙂`,
+        remaining: 0,
+        limit: DAILY_LIMIT,
+      });
+    }
 
     const prompt = `
 Du bist ein viraler Hook-Generator.
@@ -67,31 +138,72 @@ Gib NUR ein JSON-Array von Strings zurück.
         .slice(0, count);
     }
 
-    return res.json({ hooks });
+    const remaining = incLimit(req);
+
+    return res.json({ hooks, remaining, limit: DAILY_LIMIT });
   } catch (err) {
-    console.error("❌ OpenAI/API Error:", err);
+    console.error("❌ /api/hooks Error:", err);
     const status = err?.status || 500;
     const message = err?.error?.message || err?.message || "Unbekannter Fehler";
     return res.status(status).json({ error: message });
   }
 });
-} catch (err) {
-  console.error("❌ OpenAI/API Error:", err);
 
-  // OpenAI SDK errors haben oft status + message
-  const status = err?.status || 500;
-  const message =
-    err?.error?.message ||
-    err?.message ||
-    "Unbekannter Fehler";
+app.post("/api/script", async (req, res) => {
+  try {
+    const hook = (req.body?.hook || "").trim();
+    const topic = (req.body?.topic || "").trim();
+    const platform = (req.body?.platform || "tiktok").trim();
+    const tone = (req.body?.tone || "direkt").trim();
 
-  return res.status(status).json({ error: message });
-}
+    if (!hook && !topic) return res.status(400).json({ error: "hook oder topic fehlt" });
+
+    const lim = checkLimit(req);
+    if (!lim.ok) {
+      return res.status(429).json({
+        error: `Tageslimit erreicht (${DAILY_LIMIT}/Tag). Komm morgen wieder 🙂`,
+        remaining: 0,
+        limit: DAILY_LIMIT,
+      });
+    }
+
+    const base = hook ? `Hook: "${hook}"` : `Thema: "${topic}"`;
+
+    const prompt = `
+Schreibe ein deutsches Kurzvideo-Script (30–45 Sekunden) für ${platformMap[platform] || platformMap.tiktok}.
+${base}
+
+Ton: ${tone} (klar, modern, nicht cringe)
+
+Struktur:
+1) Hook (1 Satz)
+2) 3 schnelle Punkte (kurze Sätze)
+3) Mini-Fazit + Call-to-Action (1 Satz)
+
+Regeln:
+- Keine Emojis
+- Keine Hashtags
+- Keine Aufzählungszeichen, nur normale Zeilen
+Gib NUR den Script-Text zurück.
+`;
+
+    const resp = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: prompt,
+    });
+
+    const script = (resp.output_text || "").trim();
+    const remaining = incLimit(req);
+
+    return res.json({ script, remaining, limit: DAILY_LIMIT });
+  } catch (err) {
+    console.error("❌ /api/script Error:", err);
+    const status = err?.status || 500;
+    const message = err?.error?.message || err?.message || "Unbekannter Fehler";
+    return res.status(status).json({ error: message });
+  }
 });
 
-app.get("/", (req, res) => {
-  res.send("Server läuft. Öffne index.html im Browser.");
-});
-
+// Render/Heroku style port
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server läuft auf http://localhost:${PORT}`));
+app.listen(PORT, () => console.log("✅ Server läuft auf Port", PORT));
