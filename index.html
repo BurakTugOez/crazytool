@@ -1,202 +1,983 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hook Generator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hook Generator</title>
 
-<style>
-:root{
-  --bg1:#0b1224;
-  --bg2:#0f1b35;
-  --card: rgba(255,255,255,0.06);
-  --stroke: rgba(255,255,255,0.14);
-  --text:#e6eefc;
-  --muted:#9fb0cc;
-  --green:#22c55e;
-  --green2:#16a34a;
-}
+  <style>
+    :root{
+      /* Professional SaaS palette */
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --bg2:#0E1630;
 
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  color:var(--text);
-  min-height:100vh;
-  background: linear-gradient(180deg,var(--bg1),var(--bg2));
-  display:flex;
-  justify-content:center;
-  padding:50px 16px;
-}
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.04);
+      --stroke: rgba(255,255,255,0.12);
 
-.wrap{width:900px}
+      --text:#EAF0FF;
+      --muted:#A7B2D6;
 
-h1{margin:0}
+      --accent:#6D5EF7; /* purple */
+      --accent2:#22C55E; /* green */
+      --accent3:#38BDF8; /* blue */
 
-.siteLabel{
-  display:inline-block;
-  margin-top:8px;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.06);
-  color: var(--muted);
-  font-size:12px;
-  font-weight:900;
-}
+      --shadow: 0 18px 60px rgba(0,0,0,0.55);
+      --shadow2: 0 10px 30px rgba(0,0,0,0.35);
 
-.card{
-  background:var(--card);
-  border:1px solid var(--stroke);
-  border-radius:20px;
-  padding:20px;
-  margin-top:20px;
-}
+      --radius: 18px;
+      --radius2: 26px;
+    }
 
-input,select{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.18);
-  background:rgba(0,0,0,0.3);
-  color:white;
-}
+    *{ box-sizing:border-box; }
+    html, body { height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(900px 550px at 18% 14%, rgba(109,94,247,0.22), transparent 60%),
+        radial-gradient(900px 550px at 82% 16%, rgba(56,189,248,0.14), transparent 62%),
+        radial-gradient(1100px 650px at 50% 110%, rgba(34,197,94,0.14), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 45%, var(--bg2));
+      display:flex;
+      justify-content:center;
+      padding: 28px 16px;
+    }
 
-button{
-  background:var(--green);
-  color:black;
-  padding:10px 14px;
-  border:none;
-  border-radius:12px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    .app{
+      width:min(1120px, 100%);
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:16px;
+      align-items:start;
+    }
 
-.copyBtn{
-  background:rgba(255,255,255,0.1);
-  color:white;
-  padding:6px 10px;
-  border-radius:10px;
-  margin-left:10px;
-}
+    @media (max-width: 980px){
+      .app{ grid-template-columns: 1fr; }
+    }
 
-ul{margin-top:15px}
+    .panel{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow:hidden;
+    }
 
-#loveOverlay{
-  position:fixed;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  font-size:60px;
-  font-weight:900;
-  background:rgba(0,0,0,0.5);
-  animation:loveAnim 2s ease forwards;
-}
+    .panelHeader{
+      padding: 18px 18px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+    }
 
-@keyframes loveAnim{
-  0%{opacity:0;transform:scale(0.5)}
-  50%{opacity:1;transform:scale(1.2)}
-  100%{opacity:0;transform:scale(1)}
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
 
-#easterZone{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100px;
-  height:100px;
-  opacity:0;
-  cursor:pointer;
-}
-</style>
+    .logo{
+      width:44px; height:44px;
+      border-radius: 14px;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(120% 120% at 20% 20%, rgba(109,94,247,0.9), rgba(56,189,248,0.65));
+      box-shadow: 0 14px 32px rgba(109,94,247,0.22);
+      border: 1px solid rgba(255,255,255,0.16);
+    }
+
+    .brandTitle{
+      line-height:1.1;
+    }
+    .brandTitle h1{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:0.2px;
+    }
+    .brandTitle p{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      font-weight:900;
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: #0B1020;
+      background: linear-gradient(180deg, rgba(109,94,247,1), rgba(109,94,247,0.86));
+      box-shadow: 0 16px 30px rgba(109,94,247,0.16);
+      transition: transform .08s ease, filter .08s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+    .btn:hover{ filter: brightness(1.05); }
+    .btn:active{ transform: translateY(1px); }
+    .btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+    .btnGhost{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      box-shadow: var(--shadow2);
+    }
+
+    .sidebarBody{
+      padding: 16px 16px 18px;
+    }
+
+    .sectionTitle{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight:900;
+      letter-spacing:0.18px;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    .history{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .histItem{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      cursor:pointer;
+      transition: transform .08s ease, border-color .12s ease;
+    }
+    .histItem:hover{
+      transform: translateY(-1px);
+      border-color: rgba(109,94,247,0.35);
+    }
+    .histItem b{
+      display:block;
+      font-size: 13px;
+      margin-bottom:4px;
+    }
+    .histItem span{
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pillRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .pillBtn{
+      cursor:pointer;
+      border-radius: 999px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-weight:900;
+      font-size:12px;
+    }
+    .pillBtn:hover{ border-color: rgba(56,189,248,0.35); }
+
+    /* Main panel */
+    .mainHeaderRight{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+    }
+    .tab{
+      cursor:pointer;
+      font-weight:900;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+    }
+    .tab.active{
+      border-color: rgba(109,94,247,0.5);
+      box-shadow: 0 0 0 3px rgba(109,94,247,0.16);
+    }
+
+    .mainBody{
+      padding: 16px 16px 18px;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 220px;
+      gap:12px;
+      align-items:end;
+    }
+    @media (max-width: 720px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    .label{
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight:900;
+      letter-spacing:0.18px;
+    }
+
+    input, select, textarea{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.22);
+      color: var(--text);
+      outline:none;
+      font-size: 14px;
+    }
+    textarea{ min-height: 120px; resize: vertical; }
+
+    .meta{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 720px){
+      .meta{ grid-template-columns: 1fr; }
+    }
+
+    .out{
+      margin-top: 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      padding: 14px;
+    }
+
+    .outTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .hint{
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height:1.4;
+    }
+    .err{
+      margin-top: 8px;
+      font-size: 13px;
+      color: #fecaca;
+      line-height:1.4;
+    }
+
+    ul{
+      margin: 12px 0 0;
+      padding-left: 18px;
+    }
+    li{ margin: 10px 0; line-height:1.35; }
+
+    .hookRow{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .miniBtn{
+      cursor:pointer;
+      font-size: 12px;
+      font-weight:900;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      white-space:nowrap;
+    }
+    .miniBtn:hover{ border-color: rgba(34,197,94,0.35); }
+
+    .mutedSmall{
+      font-size:12px;
+      color: var(--muted);
+      font-weight:800;
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.6);
+      color: var(--text);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      z-index: 9999;
+    }
+    .toast.show{ opacity:1; }
+
+    /* Easter Egg overlay */
+    #easterZone{
+      position: fixed;
+      top: 0; left: 0;
+      width: 90px; height: 90px;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 9998;
+    }
+    #loveOverlay{
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      z-index: 9997;
+      font-weight: 1000;
+      font-size: clamp(34px, 6vw, 92px);
+      letter-spacing: 0.4px;
+      color: var(--text);
+      background: rgba(0,0,0,0.38);
+      backdrop-filter: blur(8px);
+      text-shadow: 0 18px 60px rgba(0,0,0,0.65);
+    }
+    @keyframes lovePop {
+      0%   { transform: scale(0.75); opacity: 0; }
+      20%  { transform: scale(1.06); opacity: 1; }
+      60%  { transform: scale(1.0); opacity: 1; }
+      100% { transform: scale(0.98); opacity: 0; }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="app">
 
-<div class="wrap">
+    <!-- Sidebar -->
+    <aside class="panel">
+      <div class="panelHeader">
+        <div class="brand">
+          <div class="logo" aria-label="Logo">
+            <!-- Invented logo (SVG) -->
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2.5c2.6 2 4 4.2 4 6.6 0 3.6-3 6.4-4 7.4-1-1-4-3.8-4-7.4 0-2.4 1.4-4.6 4-6.6Z" fill="rgba(255,255,255,0.92)"/>
+              <path d="M5 13.2c1.9 1 4.4 1.5 7 1.5s5.1-.5 7-1.5c-.6 4.7-3.6 8.3-7 8.3s-6.4-3.6-7-8.3Z" fill="rgba(0,0,0,0.28)"/>
+            </svg>
+          </div>
+          <div class="brandTitle">
+            <h1>Hook Generator</h1>
+            <p>Professionelle Hooks & Scripts – schnell.</p>
+          </div>
+        </div>
+        <span class="chip">✨ by Tugi</span>
+      </div>
 
-<h1>Hook Generator</h1>
-<div class="siteLabel">✨ by Tugi</div>
+      <div class="sidebarBody">
+        <div class="sectionTitle">Free Today</div>
+        <div style="display:flex; gap:10px; align-items:center; justify-content:space-between;">
+          <span class="chip"><span id="remaining">–</span>/<span id="limit">–</span> requests</span>
+          <button class="btn btnGhost" onclick="openLogin()">Login</button>
+        </div>
+        <div class="hint">Login ist lokal (MVP). Für echte Accounts später: richtige Auth.</div>
 
-<div class="card">
+        <div style="height:14px"></div>
 
-<input id="topic" placeholder="Thema eingeben...">
+        <div class="sectionTitle">History</div>
+        <div class="history" id="history"></div>
 
-<br><br>
+        <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+          <button class="btn btnGhost" onclick="clearHistory()">History löschen</button>
+          <button class="btn btnGhost" onclick="toggleAutoRun()">Auto-Run: <span id="autoRunTxt">Aus</span></button>
+        </div>
 
-<select id="style">
-<option value="neugierig">Neugierig</option>
-<option value="provokant">Provokant</option>
-<option value="story">Story</option>
-<option value="fakten">Fakten</option>
-</select>
+        <div style="height:16px"></div>
+        <div class="sectionTitle">Schnelltests</div>
+        <div class="pillRow">
+          <button class="pillBtn" onclick="setTopic('Beziehung')">Beziehung</button>
+          <button class="pillBtn" onclick="setTopic('Geld sparen')">Geld sparen</button>
+          <button class="pillBtn" onclick="setTopic('Fitness')">Fitness</button>
+          <button class="pillBtn" onclick="setTopic('KI Videos')">KI Videos</button>
+          <button class="pillBtn" onclick="setTopic('Selbstbewusstsein')">Selbstbewusstsein</button>
+        </div>
 
-<br><br>
+        <div style="height:12px"></div>
+        <div class="mutedSmall">Tipp: Provokant + 10 → beste Varianten.</div>
+      </div>
+    </aside>
 
-<button onclick="generate()">Generieren ⚡</button>
+    <!-- Main -->
+    <main class="panel">
+      <div class="panelHeader">
+        <div class="tabs">
+          <button class="tab active" id="tabHooks" onclick="setTab('hooks')">Hooks</button>
+          <button class="tab" id="tabScript" onclick="setTab('script')">Hook → Script</button>
+        </div>
 
-<div id="result"></div>
+        <div class="mainHeaderRight">
+          <button class="btn btnGhost" onclick="shareLink()">Share</button>
+          <button class="btn btnGhost" onclick="fillExample()">Beispiel</button>
+        </div>
+      </div>
 
-</div>
+      <div class="mainBody">
 
-</div>
+        <!-- Hooks Panel -->
+        <section id="panelHooks">
+          <div class="grid2">
+            <div>
+              <div class="label">Thema</div>
+              <input id="userInput" placeholder="z.B. Beziehung, Geld, Fitness, KI Videos..." />
+            </div>
+            <button class="btn" id="genBtn" onclick="generateHooks()">
+              Generieren <span style="opacity:.9;">⚡</span>
+            </button>
+          </div>
 
-<div id="loveOverlay">Seni seviyorum hayatim ❤️</div>
-<div id="easterZone" onclick="showLove()"></div>
+          <div class="meta">
+            <div>
+              <div class="label">Stil</div>
+              <select id="style">
+                <option value="neugierig" selected>Neugierig</option>
+                <option value="provokant">Provokant</option>
+                <option value="story">Story</option>
+                <option value="fakten">Fakten</option>
+              </select>
+            </div>
+            <div>
+              <div class="label">Plattform</div>
+              <select id="platform">
+                <option value="tiktok" selected>TikTok</option>
+                <option value="reels">Reels</option>
+                <option value="youtube">YouTube</option>
+              </select>
+            </div>
+            <div>
+              <div class="label">Anzahl</div>
+              <select id="count">
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+          </div>
 
-<script>
-const API="https://crazytool.onrender.com/api/hooks";
-let lastHooks=[];
+          <div class="out" id="outputHooks">
+            <div class="outTop">
+              <strong>Ergebnis</strong>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="miniBtn" onclick="copyAll()">Alles kopieren</button>
+                <button class="miniBtn" onclick="clearHooks()">Leeren</button>
+              </div>
+            </div>
+            <div class="hint">Noch leer…</div>
+          </div>
+        </section>
 
-async function safeCopy(text){
-  try{
-    await navigator.clipboard.writeText(text);
-  }catch{
-    const ta=document.createElement("textarea");
-    ta.value=text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    document.body.removeChild(ta);
-  }
-}
+        <!-- Script Panel -->
+        <section id="panelScript" style="display:none;">
+          <div class="label">Hook (oder leer lassen und Thema nutzen)</div>
+          <textarea id="hookInput" placeholder="Füge hier einen Hook ein…"></textarea>
 
-window.generate=async function(){
-  const topic=document.getElementById("topic").value;
-  const style=document.getElementById("style").value;
+          <div class="meta" style="margin-top:12px;">
+            <div>
+              <div class="label">Plattform</div>
+              <select id="platform2">
+                <option value="tiktok" selected>TikTok</option>
+                <option value="reels">Reels</option>
+                <option value="youtube">YouTube</option>
+              </select>
+            </div>
+            <div>
+              <div class="label">Ton</div>
+              <select id="tone">
+                <option value="direkt" selected>Direkt</option>
+                <option value="freundlich">Freundlich</option>
+                <option value="hart">Hart</option>
+                <option value="story">Story-Style</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:end;">
+              <button class="btn" id="scriptBtn" onclick="generateScript()">Script bauen 📝</button>
+            </div>
+          </div>
 
-  const res=await fetch(API,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({topic,style})
-  });
+          <div class="out" id="outputScript">
+            <div class="outTop">
+              <strong>Script</strong>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="miniBtn" onclick="copyScript()">Copy</button>
+                <button class="miniBtn" onclick="clearScript()">Leeren</button>
+              </div>
+            </div>
+            <div class="hint">Noch leer…</div>
+          </div>
+        </section>
 
-  const data=await res.json();
-  const hooks=data.hooks||[];
-  lastHooks=hooks;
+      </div>
+    </main>
 
-  let html="<ul>";
-  hooks.forEach(h=>{
-    html+=`<li>${h}
-      <button class="copyBtn" onclick="copyOne('${h.replace(/'/g,"")}')">Copy</button>
-    </li>`;
-  });
-  html+="</ul>";
+  </div>
 
-  document.getElementById("result").innerHTML=html;
-}
+  <div class="toast" id="toast">Kopiert ✅</div>
 
-window.copyOne=async function(t){
-  await safeCopy(t);
-  alert("Kopiert ✅");
-}
+  <!-- Easter egg -->
+  <div id="easterZone" onclick="showLove()"></div>
+  <div id="loveOverlay">Seni seviyorum hayatim</div>
 
-window.showLove=function(){
-  const el=document.getElementById("loveOverlay");
-  el.style.display="flex";
-  setTimeout(()=>el.style.display="none",2000);
-}
-</script>
+  <script>
+    // ---- API ----
+    const API_BASE = "https://crazytool.onrender.com";
+    const API_HOOKS = API_BASE + "/api/hooks";
+    const API_SCRIPT = API_BASE + "/api/script";
 
+    // ---- State ----
+    let lastHooks = [];
+    let lastScript = "";
+    let tab = "hooks";
+
+    // ---- Toast ----
+    function toast(msg="Kopiert ✅"){
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(()=>t.classList.remove("show"), 900);
+    }
+
+    // ---- Copy (works even if clipboard API is blocked) ----
+    function fallbackCopy(text){
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    async function safeCopy(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        return fallbackCopy(text);
+      }
+    }
+
+    // ---- Local "login" (MVP) ----
+    function getUser(){
+      return JSON.parse(localStorage.getItem("hg_user") || "null");
+    }
+    function setUser(u){
+      localStorage.setItem("hg_user", JSON.stringify(u));
+      toast("Login gespeichert");
+    }
+    function getUserId(){
+      const u = getUser();
+      return u?.id || "";
+    }
+
+    window.openLogin = function openLogin(){
+      const u = getUser();
+      const name = prompt("Name (optional):", u?.name || "") ?? "";
+      const email = prompt("E-Mail (für Limit, local):", u?.email || "") ?? "";
+      const id = (email || "").trim().toLowerCase();
+      setUser({ name: name.trim(), email: email.trim(), id });
+    };
+
+    // ---- Daily limit UI (stored after calls) ----
+    function setLimitUI(remaining, limit){
+      document.getElementById("remaining").textContent = (remaining ?? "–");
+      document.getElementById("limit").textContent = (limit ?? "–");
+      if (typeof remaining === "number") localStorage.setItem("hg_remaining", String(remaining));
+      if (typeof limit === "number") localStorage.setItem("hg_limit", String(limit));
+    }
+
+    function loadLimitUI(){
+      const r = localStorage.getItem("hg_remaining");
+      const l = localStorage.getItem("hg_limit");
+      if(r && l) setLimitUI(parseInt(r,10), parseInt(l,10));
+    }
+
+    // ---- Tabs ----
+    window.setTab = function setTab(next){
+      tab = next;
+      document.getElementById("tabHooks").classList.toggle("active", next==="hooks");
+      document.getElementById("tabScript").classList.toggle("active", next==="script");
+      document.getElementById("panelHooks").style.display = next==="hooks" ? "block" : "none";
+      document.getElementById("panelScript").style.display = next==="script" ? "block" : "none";
+    };
+
+    // ---- History ----
+    const HISTORY_KEY = "hg_history";
+    const AUTORUN_KEY = "hg_autorun";
+
+    function loadHistory(){
+      return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    }
+    function saveHistory(items){
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, 10)));
+      renderHistory();
+    }
+    function addHistory(item){
+      const items = loadHistory();
+      const filtered = items.filter(x => !(x.topic===item.topic && x.style===item.style && x.platform===item.platform && x.count===item.count));
+      filtered.unshift({ ...item, ts: Date.now() });
+      saveHistory(filtered);
+    }
+
+    window.clearHistory = function clearHistory(){
+      localStorage.removeItem(HISTORY_KEY);
+      renderHistory();
+      toast("History gelöscht");
+    };
+
+    function getAutoRun(){
+      return localStorage.getItem(AUTORUN_KEY) === "1";
+    }
+
+    window.toggleAutoRun = function toggleAutoRun(){
+      const v = getAutoRun() ? "0" : "1";
+      localStorage.setItem(AUTORUN_KEY, v);
+      document.getElementById("autoRunTxt").textContent = getAutoRun() ? "An" : "Aus";
+      toast("Auto-Run geändert");
+    };
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+    }
+
+    function renderHistory(){
+      const el = document.getElementById("history");
+      const items = loadHistory();
+      if(!items.length){
+        el.innerHTML = `<div class="hint">Noch keine Einträge…</div>`;
+        return;
+      }
+      el.innerHTML = items.map(i => `
+        <div class="histItem" onclick='applyHistory(${JSON.stringify(i).replace(/'/g,"&#39;")})'>
+          <div>
+            <b>${escapeHtml(i.topic)}</b>
+            <span>${escapeHtml(i.style)} · ${escapeHtml(i.platform)} · ${i.count}</span>
+          </div>
+          <button class="miniBtn" onclick="event.stopPropagation(); shareFrom(${JSON.stringify(i).replace(/'/g,"&#39;")})">Share</button>
+        </div>
+      `).join("");
+    }
+
+    window.applyHistory = function applyHistory(i){
+      document.getElementById("userInput").value = i.topic;
+      document.getElementById("style").value = i.style;
+      document.getElementById("platform").value = i.platform;
+      document.getElementById("count").value = String(i.count);
+      setTab("hooks");
+      if(getAutoRun()) generateHooks();
+    };
+
+    // ---- Quick set topic ----
+    window.setTopic = function setTopic(v){
+      document.getElementById("userInput").value = v;
+      document.getElementById("userInput").focus();
+    };
+
+    window.fillExample = function fillExample(){
+      setTopic("Geld sparen");
+      document.getElementById("style").value = "provokant";
+      document.getElementById("platform").value = "tiktok";
+      document.getElementById("count").value = "10";
+      toast("Beispiel gesetzt");
+    };
+
+    // ---- Share Link ----
+    function buildShareParams(obj){
+      const p = new URLSearchParams();
+      p.set("topic", obj.topic);
+      p.set("style", obj.style);
+      p.set("platform", obj.platform);
+      p.set("count", String(obj.count));
+      p.set("tab", obj.tab || "hooks");
+      return p.toString();
+    }
+
+    window.shareLink = async function shareLink(){
+      const obj = {
+        topic: document.getElementById("userInput").value.trim(),
+        style: document.getElementById("style").value,
+        platform: document.getElementById("platform").value,
+        count: parseInt(document.getElementById("count").value, 10),
+        tab
+      };
+      if(!obj.topic){ toast("Erst Thema eingeben"); return; }
+      const url = location.origin + location.pathname + "?" + buildShareParams(obj);
+      const ok = await safeCopy(url);
+      toast(ok ? "Share-Link kopiert ✅" : "Share kopieren ging nicht");
+    };
+
+    window.shareFrom = async function shareFrom(i){
+      const url = location.origin + location.pathname + "?" + buildShareParams({ ...i, tab:"hooks" });
+      const ok = await safeCopy(url);
+      toast(ok ? "Share-Link kopiert ✅" : "Share kopieren ging nicht");
+    };
+
+    function applyFromURL(){
+      const q = new URLSearchParams(location.search);
+      const topic = q.get("topic");
+      const style = q.get("style");
+      const platform = q.get("platform");
+      const count = q.get("count");
+      const t = q.get("tab");
+      if(t) setTab(t);
+      if(topic) document.getElementById("userInput").value = topic;
+      if(style) document.getElementById("style").value = style;
+      if(platform) document.getElementById("platform").value = platform;
+      if(count) document.getElementById("count").value = count;
+      if(topic && getAutoRun()) generateHooks();
+    }
+
+    // ---- Hooks UI helpers ----
+    window.clearHooks = function clearHooks(){
+      lastHooks = [];
+      document.getElementById("outputHooks").innerHTML = `
+        <div class="outTop">
+          <strong>Ergebnis</strong>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="miniBtn" onclick="copyAll()">Alles kopieren</button>
+            <button class="miniBtn" onclick="clearHooks()">Leeren</button>
+          </div>
+        </div>
+        <div class="hint">Noch leer…</div>
+      `;
+    };
+
+    window.copyAll = async function copyAll(){
+      if(!lastHooks.length){ toast("Nichts zum Kopieren"); return; }
+      const ok = await safeCopy(lastHooks.join("\n"));
+      toast(ok ? "Alles kopiert ✅" : "Copy blockiert ❌");
+    };
+
+    window.copyOne = async function copyOne(text){
+      const ok = await safeCopy(text);
+      toast(ok ? "Kopiert ✅" : "Copy blockiert ❌");
+    };
+
+    window.makeScriptFromHook = async function makeScriptFromHook(h){
+      setTab("script");
+      document.getElementById("hookInput").value = h;
+      document.getElementById("platform2").value = document.getElementById("platform").value;
+      await generateScript();
+    };
+
+    // ---- Generate Hooks ----
+    window.generateHooks = async function generateHooks(){
+      const topic = document.getElementById("userInput").value.trim();
+      const style = document.getElementById("style").value;
+      const platform = document.getElementById("platform").value;
+      const count = parseInt(document.getElementById("count").value, 10);
+
+      const out = document.getElementById("outputHooks");
+      const btn = document.getElementById("genBtn");
+
+      if(!topic){
+        out.innerHTML = `<div class="hint">Bitte erst ein Thema eingeben 🙂</div>`;
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `Generiere… ⏳`;
+      out.innerHTML = `<div class="hint">KI arbeitet… (Render Free kann beim ersten Mal ~20–50s dauern)</div>`;
+
+      try{
+        const res = await fetch(API_HOOKS, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ topic, style, platform, count, userId: getUserId() })
+        });
+
+        const data = await res.json();
+        if(!res.ok) throw new Error(data?.error || "Fehler");
+
+        const hooks = Array.isArray(data.hooks) ? data.hooks : [];
+        lastHooks = hooks;
+
+        setLimitUI(data.remaining, data.limit);
+        addHistory({ topic, style, platform, count });
+
+        out.innerHTML = `
+          <div class="outTop">
+            <strong>Ergebnis</strong>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="miniBtn" onclick="copyAll()">Alles kopieren</button>
+              <button class="miniBtn" onclick="clearHooks()">Leeren</button>
+            </div>
+          </div>
+          <ul>
+            ${hooks.map(h => `
+              <li>
+                <div class="hookRow">
+                  <div>${escapeHtml(h)}</div>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="miniBtn" onclick="copyOne(${JSON.stringify(h)})">Copy</button>
+                    <button class="miniBtn" onclick="makeScriptFromHook(${JSON.stringify(h)})">Script</button>
+                  </div>
+                </div>
+              </li>
+            `).join("")}
+          </ul>
+          <div class="hint">Pro-Move: Hook #1 → Script bauen → sofort posten.</div>
+        `;
+      }catch(err){
+        out.innerHTML = `<div class="err">Fehler: ${escapeHtml(err.message)}</div>`;
+      }finally{
+        btn.disabled = false;
+        btn.innerHTML = `Generieren ⚡`;
+      }
+    };
+
+    // ---- Script UI helpers ----
+    window.clearScript = function clearScript(){
+      lastScript = "";
+      document.getElementById("outputScript").innerHTML = `
+        <div class="outTop">
+          <strong>Script</strong>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="miniBtn" onclick="copyScript()">Copy</button>
+            <button class="miniBtn" onclick="clearScript()">Leeren</button>
+          </div>
+        </div>
+        <div class="hint">Noch leer…</div>
+      `;
+    };
+
+    window.copyScript = async function copyScript(){
+      if(!lastScript){ toast("Nichts zum Kopieren"); return; }
+      const ok = await safeCopy(lastScript);
+      toast(ok ? "Script kopiert ✅" : "Copy blockiert ❌");
+    };
+
+    // ---- Generate Script ----
+    window.generateScript = async function generateScript(){
+      const hook = document.getElementById("hookInput").value.trim();
+      const topic = document.getElementById("userInput").value.trim();
+      const platform = document.getElementById("platform2").value;
+      const tone = document.getElementById("tone").value;
+
+      const btn = document.getElementById("scriptBtn");
+      const out = document.getElementById("outputScript");
+
+      btn.disabled = true;
+      btn.innerHTML = `Baue… ⏳`;
+      out.innerHTML = `<div class="hint">Script wird erstellt…</div>`;
+
+      try{
+        const res = await fetch(API_SCRIPT, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ hook, topic, platform, tone, userId: getUserId() })
+        });
+
+        const data = await res.json();
+        if(!res.ok) throw new Error(data?.error || "Fehler");
+
+        lastScript = (data.script || "").trim();
+        setLimitUI(data.remaining, data.limit);
+
+        out.innerHTML = `
+          <div class="outTop">
+            <strong>Script</strong>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="miniBtn" onclick="copyScript()">Copy</button>
+              <button class="miniBtn" onclick="clearScript()">Leeren</button>
+            </div>
+          </div>
+          <pre style="white-space:pre-wrap; margin:12px 0 0; font-family:inherit;">${escapeHtml(lastScript)}</pre>
+          <div class="hint">Optional: Als nächstes bauen wir Caption + Hashtags + CTA Varianten.</div>
+        `;
+      }catch(err){
+        out.innerHTML = `<div class="err">Fehler: ${escapeHtml(err.message)}</div>`;
+      }finally{
+        btn.disabled = false;
+        btn.innerHTML = `Script bauen 📝`;
+      }
+    };
+
+    // ---- Enter key triggers generate on hooks tab ----
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" && tab === "hooks"){
+        const active = document.activeElement?.tagName?.toLowerCase();
+        if(active !== "textarea") generateHooks();
+      }
+    });
+
+    // ---- Easter egg ----
+    window.showLove = function showLove(){
+      const el = document.getElementById("loveOverlay");
+      el.style.display = "flex";
+      el.style.animation = "none";
+      void el.offsetWidth;
+      el.style.animation = "lovePop 2.2s ease forwards";
+      setTimeout(()=>{ el.style.display="none"; }, 2200);
+    };
+
+    // ---- Init ----
+    (function init(){
+      // autorun label
+      document.getElementById("autoRunTxt").textContent = getAutoRun() ? "An" : "Aus";
+      renderHistory();
+      loadLimitUI();
+      applyFromURL();
+      // default output boxes
+      clearHooks();
+      clearScript();
+    })();
+  </script>
 </body>
 </html>
